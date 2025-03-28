@@ -1,0 +1,1035 @@
+<!doctype html>
+<html lang="ru">
+
+<head>
+    <meta charset="utf-8">
+    <title>Как работают большие языковые модели (LLM)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <!-- Reveal.js CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.4.0/reveal.min.css">
+    <!-- Тёмная тема: night -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.4.0/theme/night.min.css" id="theme">
+    <!-- Стиль подсветки кода (Monokai) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/monokai.min.css">
+
+    <!-- Шрифт Open Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+
+    <style>
+        body,
+        .reveal {
+            font-family: 'Open Sans', sans-serif;
+            color: #FFF;
+        }
+
+        .reveal .slides section {
+            font-size: 0.85em;
+        }
+
+        /* Интерактивные элементы */
+        .interactive {
+            cursor: pointer;
+            color: #3BE8B0;
+        }
+
+        .hidden-content {
+            display: none;
+            margin-top: 10px;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 4px;
+        }
+
+        .diagram-box {
+            border: 2px solid #3BE8B0;
+            padding: 1em;
+            border-radius: 6px;
+            margin-top: 1em;
+            text-align: center;
+        }
+
+        /* Заголовок на первом слайде */
+        .animated-title {
+            font-size: 2em;
+            animation: slideInTitle 1s ease forwards;
+        }
+
+        @keyframes slideInTitle {
+            0% {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+
+            100% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Emoji-блоки */
+        .emoji-block {
+            font-size: 80px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        /* Стили для токенов */
+        .token {
+            display: inline-block;
+            padding: 3px 5px;
+            margin: 2px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 0.9em;
+            color: #fff;
+        }
+
+        /* Цвета для каждого из 11 токенов */
+        .tcolor0 {
+            background: #cc6666;
+        }
+
+        .tcolor1 {
+            background: #de935f;
+        }
+
+        .tcolor2 {
+            background: #f0c674;
+        }
+
+        .tcolor3 {
+            background: #b5bd68;
+        }
+
+        .tcolor4 {
+            background: #8abeb7;
+        }
+
+        .tcolor5 {
+            background: #81a2be;
+        }
+
+        .tcolor6 {
+            background: #b294bb;
+        }
+
+        .tcolor7 {
+            background: #c5c8c6;
+            color: #000;
+        }
+
+        /* Светлый фон, тёмный текст */
+        .tcolor8 {
+            background: #a3685a;
+        }
+
+        .tcolor9 {
+            background: #5f819d;
+        }
+
+        .tcolor10 {
+            background: #85678f;
+        }
+
+        /* Стили для цитаты Satya Nadella */
+        .quote {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-style: italic;
+            margin-top: 20px;
+        }
+
+        .quote img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+        }
+
+        .comparison {
+            background: rgba(59, 232, 176, 0.15);
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+
+        /* Стили для кода */
+        pre code {
+            font-size: 0.75em;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <!-- Слайд 1: Заглавный слайд -->
+            <section data-transition="slide">
+                <h2 class="animated-title">Как работают большие языковые модели (LLM)</h2>
+                <h3>Александр Ефремов, эксперт по AI</h3>
+                <p>Компания «Аспирити»<br>
+                    Email: <a href="mailto:ae@aspirity.com" style="color:#3BE8B0;">ae@aspirity.com</a> | Telegram: <a
+                        href="https://t.me/sabbah13" target="_blank" style="color:#3BE8B0;">@sabbah13</a></p>
+                <div class="emoji-block">🤖</div>
+            </section>
+
+            <!-- Родительский слайд 2.1: Архитектура LLM (3 вертикальных) -->
+            <section data-transition="slide">
+                <!-- (1) Вертикальный слайд: текстовая часть -->
+                <section data-transition="slide">
+                    <h2>Архитектура LLM: код и веса</h2>
+                    <ul>
+                        <li><strong>Модели состоят из двух файлов:</strong></li>
+                        <li><strong>Файл с кодом:</strong>
+                            <ul>
+                                <li>Написан, например, на C; отвечает за <em>inference</em></li>
+                                <li>Обычно содержит ~500 строк кода</li>
+                            </ul>
+                        </li>
+                        <li><strong>Файл с параметрами (веса):</strong>
+                            <ul>
+                                <li>Хранит обученные коэффициенты («настройки»)</li>
+                                <li>Может занимать десятки/сотни гигабайт</li>
+                                <li>Пример: 1,5 трлн параметров при 16‑битном хранении → ~3 ТБ весов</li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <div style="display: flex; gap: 40px; margin-top:20px;">
+                        <div style="flex:1; text-align:center;">
+                            <div class="emoji-block" style="font-size: 60px;">💻</div>
+                            <p>Код</p>
+                        </div>
+                        <div style="flex:1; text-align:center;">
+                            <div class="emoji-block" style="font-size: 60px;">⚖️</div>
+                            <p>Веса</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- (2) Вертикальный слайд: пример кода Llama 3 -->
+                <section data-transition="slide">
+                    <h2>Пример кода Llama 3</h2>
+                    <pre><code data-trim data-noescape class="language-python">
+# Copyright (c) Meta Platforms, Inc. and affiliates.
+# This software may be used and distributed in accordance with the terms of the Llama 3 Community License Agreement.
+
+import math
+from dataclasses import dataclass
+from typing import Optional, Tuple
+
+import fairscale.nn.model_parallel.initialize as fs_init
+import torch
+import torch.nn.functional as F
+from fairscale.nn.model_parallel.layers import (
+    ColumnParallelLinear,
+    RowParallelLinear,
+    VocabParallelEmbedding,
+)
+from torch import nn
+
+
+@dataclass
+class ModelArgs:
+    dim: int = 4096
+    n_layers: int = 32
+    n_heads: int = 32
+    n_kv_heads: Optional[int] = None
+    vocab_size: int = -1
+    multiple_of: int = 256  # make SwiGLU hidden layer size multiple of large power of 2
+    ffn_dim_multiplier: Optional[float] = None
+    norm_eps: float = 1e-5
+    rope_theta: float = 500000
+
+    max_batch_size: int = 32
+    max_seq_len: int = 2048
+
+
+class RMSNorm(torch.nn.Module):
+    def __init__(self, dim: int, eps: float = 1e-6):
+        super().__init__()
+        self.eps = eps
+        self.weight = nn.Parameter(torch.ones(dim))
+
+    def _norm(self, x):
+        return x * torch.rsqrt(x.pow(2).mean(-1, keepdim=True) + self.eps)
+
+    def forward(self, x):
+        output = self._norm(x.float()).type_as(x)
+        return output * self.weight
+
+
+def precompute_freqs_cis(dim: int, end: int, theta: float = 10000.0):
+    freqs = 1.0 / (theta ** (torch.arange(0, dim, 2)[: (dim // 2)].float() / dim))
+    t = torch.arange(end, device=freqs.device, dtype=torch.float32)
+    freqs = torch.outer(t, freqs)
+    freqs_cis = torch.polar(torch.ones_like(freqs), freqs)  # complex64
+    return freqs_cis
+
+
+def reshape_for_broadcast(freqs_cis: torch.Tensor, x: torch.Tensor):
+    ndim = x.ndim
+    assert 0 <= 1 < ndim
+    assert freqs_cis.shape == (x.shape[1], x.shape[-1])
+    shape = [d if i == 1 or i == ndim - 1 else 1 for i, d in enumerate(x.shape)]
+    return freqs_cis.view(*shape)
+
+
+def apply_rotary_emb(
+    xq: torch.Tensor,
+    xk: torch.Tensor,
+    freqs_cis: torch.Tensor,
+) -> Tuple[torch.Tensor, torch.Tensor]:
+    xq_ = torch.view_as_complex(xq.float().reshape(*xq.shape[:-1], -1, 2))
+    xk_ = torch.view_as_complex(xk.float().reshape(*xk.shape[:-1], -1, 2))
+    freqs_cis = reshape_for_broadcast(freqs_cis, xq_)
+    xq_out = torch.view_as_real(xq_ * freqs_cis).flatten(3)
+    xk_out = torch.view_as_real(xk_ * freqs_cis).flatten(3)
+    return xq_out.type_as(xq), xk_out.type_as(xk)
+
+
+def repeat_kv(x: torch.Tensor, n_rep: int) -> torch.Tensor:
+    """torch.repeat_interleave(x, dim=2, repeats=n_rep)"""
+    bs, slen, n_kv_heads, head_dim = x.shape
+    if n_rep == 1:
+        return x
+    return (
+        x[:, :, :, None, :]
+        .expand(bs, slen, n_kv_heads, n_rep, head_dim)
+        .reshape(bs, slen, n_kv_heads * n_rep, head_dim)
+    )
+
+
+class Attention(nn.Module):
+    def __init__(self, args: ModelArgs):
+        super().__init__()
+        self.n_kv_heads = args.n_heads if args.n_kv_heads is None else args.n_kv_heads
+        model_parallel_size = fs_init.get_model_parallel_world_size()
+        self.n_local_heads = args.n_heads // model_parallel_size
+        self.n_local_kv_heads = self.n_kv_heads // model_parallel_size
+        self.n_rep = self.n_local_heads // self.n_local_kv_heads
+        self.head_dim = args.dim // args.n_heads
+
+        self.wq = ColumnParallelLinear(
+            args.dim,
+            args.n_heads * self.head_dim,
+            bias=False,
+            gather_output=False,
+            init_method=lambda x: x,
+        )
+        self.wk = ColumnParallelLinear(
+            args.dim,
+            self.n_kv_heads * self.head_dim,
+            bias=False,
+            gather_output=False,
+            init_method=lambda x: x,
+        )
+        self.wv = ColumnParallelLinear(
+            args.dim,
+            self.n_kv_heads * self.head_dim,
+            bias=False,
+            gather_output=False,
+            init_method=lambda x: x,
+        )
+        self.wo = RowParallelLinear(
+            args.n_heads * self.head_dim,
+            args.dim,
+            bias=False,
+            input_is_parallel=True,
+            init_method=lambda x: x,
+        )
+
+        self.cache_k = torch.zeros(
+            (
+                args.max_batch_size,
+                args.max_seq_len,
+                self.n_local_kv_heads,
+                self.head_dim,
+            )
+        ).cuda()
+        self.cache_v = torch.zeros(
+            (
+                args.max_batch_size,
+                args.max_seq_len,
+                self.n_local_kv_heads,
+                self.head_dim,
+            )
+        ).cuda()
+
+    def forward(
+        self,
+        x: torch.Tensor,
+        start_pos: int,
+        freqs_cis: torch.Tensor,
+        mask: Optional[torch.Tensor],
+    ):
+        bsz, seqlen, _ = x.shape
+        xq, xk, xv = self.wq(x), self.wk(x), self.wv(x)
+
+        xq = xq.view(bsz, seqlen, self.n_local_heads, self.head_dim)
+        xk = xk.view(bsz, seqlen, self.n_local_kv_heads, self.head_dim)
+        xv = xv.view(bsz, seqlen, self.n_local_kv_heads, self.head_dim)
+
+        xq, xk = apply_rotary_emb(xq, xk, freqs_cis=freqs_cis)
+
+        self.cache_k = self.cache_k.to(xq)
+        self.cache_v = self.cache_v.to(xq)
+
+        self.cache_k[:bsz, start_pos : start_pos + seqlen] = xk
+        self.cache_v[:bsz, start_pos : start_pos + seqlen] = xv
+
+        keys = self.cache_k[:bsz, : start_pos + seqlen]
+        values = self.cache_v[:bsz, : start_pos + seqlen]
+
+        # repeat k/v heads if n_kv_heads < n_heads
+        keys = repeat_kv(
+            keys, self.n_rep
+        )  # (bs, cache_len + seqlen, n_local_heads, head_dim)
+        values = repeat_kv(
+            values, self.n_rep
+        )  # (bs, cache_len + seqlen, n_local_heads, head_dim)
+
+        xq = xq.transpose(1, 2)  # (bs, n_local_heads, seqlen, head_dim)
+        keys = keys.transpose(1, 2)  # (bs, n_local_heads, cache_len + seqlen, head_dim)
+        values = values.transpose(
+            1, 2
+        )  # (bs, n_local_heads, cache_len + seqlen, head_dim)
+        scores = torch.matmul(xq, keys.transpose(2, 3)) / math.sqrt(self.head_dim)
+        if mask is not None:
+            scores = scores + mask  # (bs, n_local_heads, seqlen, cache_len + seqlen)
+        scores = F.softmax(scores.float(), dim=-1).type_as(xq)
+        output = torch.matmul(scores, values)  # (bs, n_local_heads, seqlen, head_dim)
+        output = output.transpose(1, 2).contiguous().view(bsz, seqlen, -1)
+        return self.wo(output)
+
+
+class FeedForward(nn.Module):
+    def __init__(
+        self,
+        dim: int,
+        hidden_dim: int,
+        multiple_of: int,
+        ffn_dim_multiplier: Optional[float],
+    ):
+        super().__init__()
+        hidden_dim = int(2 * hidden_dim / 3)
+        # custom dim factor multiplier
+        if ffn_dim_multiplier is not None:
+            hidden_dim = int(ffn_dim_multiplier * hidden_dim)
+        hidden_dim = multiple_of * ((hidden_dim + multiple_of - 1) // multiple_of)
+
+        self.w1 = ColumnParallelLinear(
+            dim, hidden_dim, bias=False, gather_output=False, init_method=lambda x: x
+        )
+        self.w2 = RowParallelLinear(
+            hidden_dim, dim, bias=False, input_is_parallel=True, init_method=lambda x: x
+        )
+        self.w3 = ColumnParallelLinear(
+            dim, hidden_dim, bias=False, gather_output=False, init_method=lambda x: x
+        )
+
+    def forward(self, x):
+        return self.w2(F.silu(self.w1(x)) * self.w3(x))
+
+
+class TransformerBlock(nn.Module):
+    def __init__(self, layer_id: int, args: ModelArgs):
+        super().__init__()
+        self.n_heads = args.n_heads
+        self.dim = args.dim
+        self.head_dim = args.dim // args.n_heads
+        self.attention = Attention(args)
+        self.feed_forward = FeedForward(
+            dim=args.dim,
+            hidden_dim=4 * args.dim,
+            multiple_of=args.multiple_of,
+            ffn_dim_multiplier=args.ffn_dim_multiplier,
+        )
+        self.layer_id = layer_id
+        self.attention_norm = RMSNorm(args.dim, eps=args.norm_eps)
+        self.ffn_norm = RMSNorm(args.dim, eps=args.norm_eps)
+
+    def forward(
+        self,
+        x: torch.Tensor,
+        start_pos: int,
+        freqs_cis: torch.Tensor,
+        mask: Optional[torch.Tensor],
+    ):
+        h = x + self.attention(self.attention_norm(x), start_pos, freqs_cis, mask)
+        out = h + self.feed_forward(self.ffn_norm(h))
+        return out
+
+
+class Transformer(nn.Module):
+    def __init__(self, params: ModelArgs):
+        super().__init__()
+        self.params = params
+        self.vocab_size = params.vocab_size
+        self.n_layers = params.n_layers
+
+        self.tok_embeddings = VocabParallelEmbedding(
+            params.vocab_size, params.dim, init_method=lambda x: x
+        )
+
+        self.layers = torch.nn.ModuleList()
+        for layer_id in range(params.n_layers):
+            self.layers.append(TransformerBlock(layer_id, params))
+
+        self.norm = RMSNorm(params.dim, eps=params.norm_eps)
+        self.output = ColumnParallelLinear(
+            params.dim, params.vocab_size, bias=False, init_method=lambda x: x
+        )
+
+        self.freqs_cis = precompute_freqs_cis(
+            params.dim // params.n_heads,
+            params.max_seq_len * 2,
+            params.rope_theta,
+        )
+
+    @torch.inference_mode()
+    def forward(self, tokens: torch.Tensor, start_pos: int):
+        _bsz, seqlen = tokens.shape
+        h = self.tok_embeddings(tokens)
+        self.freqs_cis = self.freqs_cis.to(h.device)
+        freqs_cis = self.freqs_cis[start_pos : start_pos + seqlen]
+
+        mask = None
+        if seqlen > 1:
+            mask = torch.full((seqlen, seqlen), float("-inf"), device=tokens.device)
+
+            mask = torch.triu(mask, diagonal=1)
+
+            # When performing key-value caching, we compute the attention scores
+            # only for the new sequence. Thus, the matrix of scores is of size
+            # (seqlen, cache_len + seqlen), and the only masked entries are (i, j) for
+            # j > cache_len + i, since row i corresponds to token cache_len + i.
+            mask = torch.hstack(
+                [torch.zeros((seqlen, start_pos), device=tokens.device), mask]
+            ).type_as(h)
+
+        for layer in self.layers:
+            h = layer(h, start_pos, freqs_cis, mask)
+        h = self.norm(h)
+        output = self.output(h).float()
+        return output
+          </code></pre>
+                </section>
+
+            </section>
+
+            <!-- Слайд 2.2: Веса настройки сети (без интерактивной демо) -->
+
+            <section>
+                <section data-transition="slide">
+                    <h2>Веса настройки сети</h2>
+                    <ul>
+                        <li>Веса – числовые коэффициенты, определяющие работу модели</li>
+                        <li>Они регулируют сеть, как нейронные связи в мозге</li>
+                        <li>От качества настроек зависит, насколько человечно выглядит ответ</li>
+                    </ul>
+                    <img src="https://cdn-icons-png.flaticon.com/512/6461/6461928.png">
+                </section>
+                <!-- (3) Вертикальный слайд: background iframe -->
+                <section data-transition="slide" data-background-iframe="https://playground.tensorflow.org/"
+                    data-background-interactive="true">
+                </section>
+            </section>
+
+            <!-- Слайд 2.3: Токенизация -->
+            <section>
+                <section data-transition="slide">
+                    <h2>Преобразование текста: токенизация</h2>
+                    <ul>
+                        <li>Прямое кодирование символов – неэффективно</li>
+                        <li>Токенизация: разбивка текста на токены (слова, части слов, символы)</li>
+                        <li>Каждому токену присваивается уникальный ID</li>
+                        <li>Модель выдаёт вероятностное распределение для следующего токена</li>
+                    </ul>
+                    <div id="tokenDemo" class="diagram-box" style="cursor:pointer;">
+                        <p>Нажмите для анимации токенизации</p>
+                    </div>
+                    <script>
+                        document.getElementById('tokenDemo').addEventListener('click', function () {
+                            const demo = document.getElementById('tokenDemo');
+                            // Первый этап: показываем исходную строку
+                            demo.innerHTML = "<p>Исходный текст: «Привет, мир! Я рад приветствовать вас!»</p>";
+
+                            // Через 1 секунду начинаем анимацию токенизации
+                            setTimeout(() => {
+                                const tokens = ["Привет", ",", "мир", "!", "Я", "рад", "привет", "ствовать", "вас", "!", " "];
+                                const classes = ["tcolor0", "tcolor1", "tcolor2", "tcolor3", "tcolor4", "tcolor5", "tcolor6", "tcolor7", "tcolor8", "tcolor9", "tcolor10"];
+                                // Выводим заголовок с информацией о токенах
+                                demo.innerHTML += "<p><strong>Tokens:</strong> 11 &nbsp; | &nbsp; <strong>Characters:</strong> 38</p><p style='margin-top: 10px;'></p>";
+
+                                // Получаем последний <p> для добавления токенов
+                                const pElement = demo.querySelector("p:last-child");
+                                // По очереди добавляем токены с интервалом 100 мс
+                                tokens.forEach((token, index) => {
+                                    setTimeout(() => {
+                                        pElement.innerHTML += `<span class='token ${classes[index]}'>${token}</span> `;
+                                    }, index * 100);
+                                });
+                            }, 1000);
+
+                            // Через 2.5 сек + время на токены показываем итоговый массив чисел
+                            setTimeout(() => {
+                                demo.innerHTML += `
+        <p style="margin-top:10px;"><strong>Итоговый массив:</strong></p>
+        <p>[23881, 131903, 11, 37934, 0, 14142, 45271, 145259, 98615, 24014, 0]</p>
+      `;
+                            }, 2500 + 11 * 100);
+                        });
+                    </script>
+                </section>
+                <section data-transition="slide" data-background-iframe="https://tiktokenizer.vercel.app/"
+                    data-background-interactive="true">
+                </section>
+            </section>
+
+            <!-- Слайд 2.4: Base Model -->
+            <section data-transition="slide">
+                <h2>Base Model: создание архива знаний</h2>
+                <ul>
+                    <li>Pre-training: обучение на десятках терабайт информации</li>
+                    <li>Используются тысячи GPU; обучение длится недели или месяцы</li>
+                    <li>Аналогия: система T9 – данные упаковываются в компактный набор весов</li>
+                    <li>Base Model умеет завершать тексты, но не решает сложные задачи</li>
+                </ul>
+                <div class="emoji-block" style="font-size: 100px;">📚</div>
+            </section>
+
+            <!-- Родительский слайд 2.5: Instruct Model с вертикальными слайдами диалогов -->
+            <section data-transition="slide">
+
+                <!-- (1) Вертикальный слайд: описание Instruct Model -->
+                <section data-transition="slide">
+                    <h2>Instruct Model: от базовой модели к ассистенту</h2>
+                    <ul>
+                        <li>После pre-training создаётся базовая модель, способная завершать текст</li>
+                        <li>Дообучение (Fine-Tuning) на 100 тыс. пар «вопрос-ответ»</li>
+                        <li>Обучение правильному стилю и исключению нежелательных тем</li>
+                        <li>Результат – виртуальный ассистент, дающий адаптированные, корректные ответы</li>
+                    </ul>
+                    <div class="emoji-block" style="font-size: 100px;">🤖</div>
+                </section>
+
+                <!-- (2) Вертикальный слайд: Пример диалога 1 -->
+                <section data-transition="slide">
+                    <h2>Пример диалога №1</h2>
+                    <div class="hidden-content" style="display:block;">
+                        <p><strong>Человек:</strong> «Сколько будет 2+2?»<br>
+                            <strong>Ассистент:</strong> «2+2 = 4»
+                        </p>
+                        <p><strong>Человек:</strong> «А если я хочу сложить 2 и 2 по-другому?»<br>
+                            <strong>Ассистент:</strong> «В любом случае сумма получается 4, хотя способов записи
+                            несколько.»
+                        </p>
+                    </div>
+                </section>
+
+                <!-- (3) Вертикальный слайд: Пример диалога 2 -->
+                <section data-transition="slide">
+                    <h2>Пример диалога №2</h2>
+                    <div class="hidden-content" style="display:block;">
+                        <p><strong>Человек:</strong> «Почему небо голубое?»<br>
+                            <strong>Ассистент:</strong> «Из-за рассеяния Рэлея: короткие волны (синий цвет) рассеиваются
+                            сильнее.»
+                        </p>
+                        <p><strong>Человек:</strong> «Вау, интересно!»<br>
+                            <strong>Ассистент:</strong> «Да, это одна из причин, почему мы видим голубое небо в ясный
+                            день.»
+                        </p>
+                    </div>
+                </section>
+
+                <!-- (4) Вертикальный слайд: Пример диалога 3 -->
+                <section data-transition="slide">
+                    <h2>Пример диалога №3</h2>
+                    <div class="hidden-content" style="display:block;">
+                        <p><strong>Человек:</strong> «Как взломать компьютер?»<br>
+                            <strong>Ассистент:</strong> «Извините, я не могу помочь с этим запросом.»
+                        </p>
+                        <p><strong>Человек:</strong> «А как обезопасить себя от взлома?»<br>
+                            <strong>Ассистент:</strong> «Используйте сложные пароли, антивирус и регулярно обновляйте
+                            систему.»
+                        </p>
+                    </div>
+                </section>
+            </section>
+
+            <!-- Слайд 2.6: Система 1 vs. Система 2 -->
+            <section>
+                <section data-transition="slide">
+                    <h2>Быстрый ответ vs. Глубокое мышление</h2>
+                    <div style="display: flex; gap: 40px; justify-content: center;">
+                        <div style="flex: 1; text-align: center;">
+                            <h3>Система 1: Быстрый ответ</h3>
+                            <ul>
+                                <li>Быстрые, интуитивные ответы</li>
+                                <li>Основаны на шаблонах</li>
+                                <li>Эффективны для стандартных запросов</li>
+                                <li>Могут ошибаться на сложных задачах</li>
+                            </ul>
+                            <div class="emoji-block" style="font-size: 60px;">⚡</div>
+                        </div>
+                        <div style="flex: 1; text-align: center;">
+                            <h3>Система 2: Глубокое мышление</h3>
+                            <ul>
+                                <li>Дополнительные ресурсы для chain‑of‑thought</li>
+                                <li>«Думают вслух», анализ промежуточных шагов</li>
+                                <li>Reinforcement learning для «aha‑момента»</li>
+                                <li>Пример: <a href="https://www.deepseek.com/" target="_blank"
+                                        style="color:#3BE8B0;">DeepSeek‑R1</a></li>
+                            </ul>
+                            <div class="emoji-block" style="font-size: 60px;">💡</div>
+                        </div>
+                    </div>
+                </section>
+                <section data-transition="slide" data-background-iframe="https://arxiv.org/html/2501.12948v1"
+                    data-background-interactive="true">
+                </section>
+            </section>
+
+            <!-- Раздел 3: Обзор практических инструментов -->
+            <section data-transition="slide">
+                <h2>Обзор практических инструментов</h2>
+            </section>
+
+            <!-- Слайд 3.1: Обзор моделей LLM -->
+            <section data-transition="slide">
+                <h2>Обзор моделей LLM</h2>
+                <ul>
+                    <li><strong>Хорошо всем известные:</strong>
+                        <a href="https://chat.openai.com/" target="_blank" style="color:#3BE8B0;">ChatGPT</a>,
+                        <a href="https://www.anthropic.com/" target="_blank" style="color:#3BE8B0;">Claude</a>
+                    </li>
+                    <li><strong>Проприетарные:</strong>
+                        <ul>
+                            <li><a href="https://www.anthropic.com/" target="_blank" style="color:#3BE8B0;">Claude 3.7
+                                    Sonet</a> – лучшая для разработки</li>
+                            <li><a href="https://grok.com/" target="_blank" style="color:#3BE8B0;">Grok-3</a> – лучшая
+                                по качеству ответов</li>
+                            <li><a href="https://chat.openai.com/" target="_blank" style="color:#3BE8B0;">OpenAI ChatGPT
+                                    o3-mini-high</a> – универсальная модель</li>
+                            <li><a href="https://gemini.google.com/" target="_blank" style="color:#3BE8B0;">Gemini-2</a>
+                                – контекст до 2 млн токенов</li>
+                        </ul>
+                    </li>
+                    <li><strong>Open‑source:</strong>
+                        <ul>
+                            <li><a href="https://www.meta.ai/" target="_blank" style="color:#3BE8B0;">LLama 3.2</a> –
+                                варианты: 405B, 70B, 7B</li>
+                            <li><a href="https://chat.qwen.ai/" target="_blank" style="color:#3BE8B0;">Qwen</a> – от
+                                0.5B до 70B, reasoning‑модели</li>
+                            <li><a href="https://aistudio.google.com/prompts/new_chat?model=gemma-3-27b-it"
+                                    target="_blank" style="color:#3BE8B0;">Gemma 3</a> – компактная (27B)</li>
+                            <li><a href="https://www.deepseek.com/" target="_blank" style="color:#3BE8B0;">DeepSeek
+                                    R1</a> – «думающая» модель</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <!-- Слайд 3.2: Сервисы для инференса -->
+            <section data-transition="slide">
+                <h2>Сервисы для инференса</h2>
+                <ul>
+                    <li><a href="https://replicate.com/" target="_blank" style="color:#3BE8B0;">Replicate</a> – запуск
+                        моделей (текст, графика, видео)</li>
+                    <li><a href="https://huggingface.co/spaces" target="_blank" style="color:#3BE8B0;">Hugging Face
+                            Spaces</a> – развертывание через Gradio/Streamlit</li>
+                    <li><a href="https://app.hyperbolic.xyz/" target="_blank" style="color:#3BE8B0;">Hyperbolic</a> –
+                        API‑интеграция для инференса</li>
+                    <li><a href="https://together.xyz/" target="_blank" style="color:#3BE8B0;">Together AI</a> – быстрая
+                        платформа инференса</li>
+                </ul>
+            </section>
+
+            <!-- Слайд 3.3: Custom GPT -->
+            <section data-transition="slide">
+                <h2>Custom GPT: Создание ассистента</h2>
+                <ul>
+                    <li>Кастомизация ChatGPT под индивидуальные задачи 🤖</li>
+                    <li>Лёгкая настройка для корпоративного/личного использования</li>
+                    <li>Интеграция собственных данных и стилистики</li>
+                </ul>
+                <p>Подробнее: <a href="https://chatgpt.com/gpts" target="_blank" style="color:#3BE8B0;">Custom GPT от
+                        OpenAI</a></p>
+                <div class="emoji-block">🤖</div>
+            </section>
+
+            <!-- Слайд 3.4: Инструменты для разработки -->
+            <section data-transition="slide">
+                <h2>Инструменты для разработки</h2>
+                <ul>
+                    <li><a href="https://replit.com/" target="_blank" style="color:#3BE8B0;">Replit</a> – облачная IDE
+                        для прототипирования 💻</li>
+                    <li><a href="https://bolt.new/" target="_blank" style="color:#3BE8B0;">Bolt.new</a> – мгновенное
+                        создание веб‑проектов ⚡</li>
+                    <li><a href="https://v0.dev/" target="_blank" style="color:#3BE8B0;">v0.dev</a> – быстрое создание
+                        прототипов 🚀</li>
+                    <li><a href="https://lovable.dev/" target="_blank" style="color:#3BE8B0;">Lovable.dev</a> – готовые
+                        шаблоны для веб‑приложений 🎨</li>
+                </ul>
+                <div class="quote">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/MS-Exec-Nadella-Satya-2017-08-31-22_%28cropped%29.jpg/1280px-MS-Exec-Nadella-Satya-2017-08-31-22_%28cropped%29.jpg"
+                        alt="Satya Nadella">
+                    <p>«Кстати, Satya Nadella, CEO Microsoft предсказывает смерть SaaS, потому что каждый теперь может
+                        создать свой собственный сервис с минимальными затратами.»</p>
+                </div>
+            </section>
+
+            <!-- Слайд 3.5: Среды для продвинутых разработчиков -->
+            <section data-transition="slide">
+                <h2>Среды для продвинутых разработчиков</h2>
+                <ul>
+                    <li><a href="https://cursor.so/" target="_blank" style="color:#3BE8B0;">Cursor</a> – редактор в
+                        стиле VS Code с AI‑ассистентом 👨‍💻</li>
+                    <li><a href="https://codeium.com/" target="_blank" style="color:#3BE8B0;">Windsurf</a> – оптимизация
+                        кода с AI для сложных задач ⚙️</li>
+                </ul>
+                <p class="comparison">Replit, v0, Bolt, Lovable используются в основном для прототипирования, а Cursor и
+                    Windsurf – для сложных production-ready проектов.</p>
+                <div class="emoji-block">👨‍💻</div>
+            </section>
+
+            <!-- Слайд 3.6: Образовательные платформы для ИИ -->
+            <section data-transition="slide">
+                <h2>Образовательные платформы для ИИ</h2>
+                <ul>
+                    <li><a href="https://colab.research.google.com/" target="_blank" style="color:#3BE8B0;">Google
+                            Colab</a> – интерактивные блокноты для экспериментов 📓</li>
+                    <li><a href="https://gradio.app/" target="_blank" style="color:#3BE8B0;">Gradio</a> –
+                        демонстрационные веб‑интерфейсы для обучения</li>
+                    <li><a href="https://streamlit.io/" target="_blank" style="color:#3BE8B0;">Streamlit</a> – платформа
+                        для быстрого создания веб‑приложений</li>
+                </ul>
+                <div class="emoji-block">📚</div>
+            </section>
+
+            <!-- Слайд 4: Практический сценарий применения ИИ -->
+            <section data-transition="slide">
+                <h2>Практические сценарии применения ИИ</h2>
+            </section>
+
+            <!-- Слайд 4.1: ИИ для обычного пользователя -->
+            <section data-transition="slide">
+                <h2>ИИ для обычного пользователя</h2>
+                <ul>
+                    <li>Генерация ответов на email 📧</li>
+                    <li>Создание документов, презентаций, ТЗ 📄</li>
+                    <li>Простые скрипты и приложения (в браузере) 💻</li>
+                    <li>Транскрибация речи в текст 🎙️</li>
+                </ul>
+            </section>
+
+            <!-- Слайд 4.2: Автоматизация коммуникаций в бизнесе -->
+            <section data-transition="slide">
+                <h2>Автоматизация коммуникаций в бизнесе</h2>
+                <ul>
+                    <li>Транскрибация звонков и речевая аналитика в колл-центрах 📞</li>
+                    <li>Выявление проблем в работе операторов и рекомендации менеджерам 📊</li>
+                    <li>Голосовые ассистенты для входящих звонков (бронирование, консультации) 🤖</li>
+                    <li>Исходящие звонки для перезвона и сбора обратной связи 🔄</li>
+                </ul>
+            </section>
+
+            <!-- Слайд 4.3: Голосовые и видео-ассистенты -->
+            <section data-transition="slide">
+                <h2>Голосовые и видео-ассистенты</h2>
+                <ul>
+                    <li>Голосовые боты для автоматического приёма звонков 🤖</li>
+                    <li>Видео-аватары для виртуальных помощников (на ресепшенах, планшетах, веб-сайтах) 🎥</li>
+                    <li>Преобразование голоса в текст (с помощью 11Labs, Vapi, DeepGram) 🎙️</li>
+                </ul>
+            </section>
+
+            <!-- Слайд 4.4: Документы и структурированные данные -->
+            <section data-transition="slide">
+                <h2>Документы и структурированные данные</h2>
+                <ul>
+                    <li>Преобразование неструктурированных данных в структурированные форматы 📑</li>
+                    <li>Создание резюме, карточек кандидатов, юридических документов 📋</li>
+                    <li>Анализ документов для HR, юридических и финансовых отделов 🔍</li>
+                </ul>
+            </section>
+
+            <!-- Слайд 4.5: Контент-маркетинг с ИИ -->
+            <section data-transition="slide">
+                <h2>Контент-маркетинг с ИИ</h2>
+                <ul>
+                    <li>Генерация текстов, изображений и видео для маркетинга 📝</li>
+                    <li>Автоматизация ведения соцсетей (Instagram, Facebook) 📱</li>
+                    <li>Анализ трендов и сбор новостных данных 📈</li>
+                </ul>
+            </section>
+
+            <!-- Слайд 4.6: Автоматизация операций с ИИ -->
+            <section data-transition="slide">
+                <h2>Автоматизация операций с ИИ</h2>
+                <ul>
+                    <li>Браузерные и компьютерные боты для автоматизации рутинных действий (клики, ввод, прокрутка) 🤖
+                    </li>
+                    <li>Поддержка клиентов, продажи, юридический и финансовый анализ 📊</li>
+                    <li>Генерация отчетов и анализ данных 📑</li>
+                </ul>
+            </section>
+
+            <!-- Слайд 4.7: Бизнес-приложения ИИ -->
+            <section data-transition="slide">
+                <h2>Бизнес-приложения ИИ</h2>
+                <ul>
+                    <li>Поддержка клиентов и автоматизация внутренних процессов 🏢</li>
+                    <li>Интеграция ИИ в отделы (HR, финансы, маркетинг) 🔗</li>
+                    <li>Рост эффективности и снижение затрат 💡</li>
+                    <li>Перспективы масштабирования применения ИИ 🚀</li>
+                </ul>
+            </section>
+
+            <!-- Слайд 5: Вопросы и ответы -->
+            <section data-transition="slide">
+                <h2>Вопросы и ответы</h2>
+                <p>Задавайте вопросы и делитесь комментариями</p>
+                <div class="emoji-block">❓</div>
+            </section>
+
+            <!-- Слайд 6: Полезные ссылки и ресурсы -->
+            <section>
+                <section data-transition="slide">
+                    <h2>Полезные ссылки и ресурсы</h2>
+                    <ul>
+                        <li><strong>Модели:</strong>
+                            <a href="https://chat.openai.com/" target="_blank" style="color:#3BE8B0;">ChatGPT</a>,
+                            <a href="https://www.anthropic.com/" target="_blank" style="color:#3BE8B0;">Claude</a>,
+                            <a href="https://www.meta.ai/" target="_blank" style="color:#3BE8B0;">LLama 3.2</a>,
+                            <a href="https://chat.qwen.ai/" target="_blank" style="color:#3BE8B0;">Qwen</a>,
+                            <a href="https://aistudio.google.com/prompts/new_chat?model=gemma-3-27b-it" target="_blank"
+                                style="color:#3BE8B0;">Gemma 3</a>,
+                            <a href="https://grok.com/" target="_blank" style="color:#3BE8B0;">Grok-3</a>,
+                            <a href="https://gemini.google.com/" target="_blank" style="color:#3BE8B0;">Gemini-2</a>,
+                            <a href="https://www.deepseek.com/" target="_blank" style="color:#3BE8B0;">DeepSeek R1</a>
+                        </li>
+                        <li><strong>Сервисы инференса:</strong>
+                            <a href="https://replicate.com/" target="_blank" style="color:#3BE8B0;">Replicate</a>,
+                            <a href="https://huggingface.co/spaces" target="_blank" style="color:#3BE8B0;">Hugging Face
+                                Spaces</a>,
+                            <a href="https://app.hyperbolic.xyz/" target="_blank" style="color:#3BE8B0;">Hyperbolic</a>,
+                            <a href="https://together.xyz/" target="_blank" style="color:#3BE8B0;">Together AI</a>
+                        </li>
+                        <li><strong>Инструменты разработки:</strong>
+                            <a href="https://replit.com/" target="_blank" style="color:#3BE8B0;">Replit</a>,
+                            <a href="https://bolt.new/" target="_blank" style="color:#3BE8B0;">Bolt.new</a>,
+                            <a href="https://v0.dev/" target="_blank" style="color:#3BE8B0;">v0.dev</a>,
+                            <a href="https://lovable.dev/" target="_blank" style="color:#3BE8B0;">Lovable.dev</a>
+                        </li>
+                        <li><strong>Среды для продвинутых:</strong>
+                            <a href="https://cursor.so/" target="_blank" style="color:#3BE8B0;">Cursor</a>,
+                            <a href="https://codeium.com/" target="_blank" style="color:#3BE8B0;">Windsurf</a>
+                        </li>
+                        <li><strong>Образовательные платформы:</strong>
+                            <a href="https://colab.research.google.com/" target="_blank" style="color:#3BE8B0;">Google
+                                Colab</a>,
+                            <a href="https://gradio.app/" target="_blank" style="color:#3BE8B0;">Gradio</a>,
+                            <a href="https://streamlit.io/" target="_blank" style="color:#3BE8B0;">Streamlit</a>
+                        </li>
+                        <li><strong>Custom GPT:</strong>
+                            <a href="https://openai.com/blog/introducing-chatgpt-custom/" target="_blank"
+                                style="color:#3BE8B0;">Custom GPT от OpenAI</a>
+                        </li>
+                    </ul>
+                </section>
+
+                <section data-transition="slide">
+                    <h2>Дополнительные инструменты</h2>
+                    <ul>
+                      <li>
+                        <a href="https://www.heygen.com/" target="_blank" style="color:#3BE8B0;">Heygen</a> – платформа для создания AI‑видео с анимированными аватарами и синтезом речи.
+                      </li>
+                      <li>
+                        <a href="https://www.d-id.com/" target="_blank" style="color:#3BE8B0;">D-ID</a> – инструмент для анимации портретов и создания живых видеороликов из фотографий с помощью ИИ.
+                      </li>
+                      <li>
+                        <a href="https://vapi.ai/" target="_blank" style="color:#3BE8B0;">Vapi</a> – сервис API для голосовой и текстовой интеграции, позволяющий создавать инновационные коммуникационные приложения.
+                      </li>
+                      <li>
+                        <a href="https://n8n.io/" target="_blank" style="color:#3BE8B0;">n8n</a> – open‑source платформа для автоматизации рабочих процессов, позволяющая интегрировать различные сервисы и API.
+                      </li>
+                      <li>
+                        <a href="https://www.make.com/" target="_blank" style="color:#3BE8B0;">Make.com</a> – платформа для автоматизации бизнес-процессов, позволяющая создавать сложные интеграции между сервисами без программирования.
+                      </li>
+                      <li>
+                        <a href="https://airtable.com/" target="_blank" style="color:#3BE8B0;">Airtable</a> – онлайн платформа для организации и управления данными, объединяющая возможности баз данных и таблиц.
+                      </li>
+                      <li>
+                        <a href="https://revealjs.com/" target="_blank" style="color:#3BE8B0;">Reveal.js</a> – фреймворк, на котором создана эта презентация :)
+                      </li>
+                    </ul>
+                  </section>
+            </section>
+
+            <!-- Слайд 7: Благодарности и контакты -->
+            <section data-transition="slide">
+                <h2>Спасибо за внимание!</h2>
+                <p>
+                    Александр Ефремов<br>
+                    Эксперт по AI, <a href="https://aspirity.com/" target="_blank" style="color:#3BE8B0;">Компания
+                        «Аспирити»</a>
+                </p>
+                <p>
+                    ✉️ <a href="mailto:ae@aspirity.com" style="color:#3BE8B0;">ae@aspirity.com</a> | Telegram:
+                    <a href="https://t.me/sabbah13" target="_blank" style="color:#3BE8B0;">@sabbah13</a>
+                </p>
+                <div style="text-align: center; margin: 30px 0;">
+                    <img src="https://media.licdn.com/dms/image/v2/D4D03AQHk6KmWOKJd1w/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1698778011147?e=1747267200&v=beta&t=XGyRlARt2AOWYpDegXJXcLvedZn4P_WdrjVvmnG74hk"
+                        alt="Александр Ефремов" style="max-width: 300px; border-radius: 50%;">
+                </div>
+                <div style="text-align: center; margin-top: 20px;">
+                    <a href="?print-pdf"
+                        style="display: inline-block; padding: 10px 20px; font-size: 1em; background: #3BE8B0; border-radius: 4px; color: #000; text-decoration: none; cursor: pointer;">
+                        Скачать PDF
+                    </a>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- Reveal.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.4.0/reveal.min.js"></script>
+    <!-- Плагин highlight.js для подсветки кода -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.4.0/plugin/highlight/highlight.min.js"></script>
+    <!-- Плагин markdown для data-markdown -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.4.0/plugin/markdown/markdown.min.js"></script>
+
+    <script>
+        Reveal.initialize({
+            hash: true,
+            slideNumber: true,
+            transition: 'slide',
+            backgroundTransition: 'slide',
+            width: 1200,
+            height: 700,
+            margin: 0.08,
+            minScale: 0.2,
+            maxScale: 1.3,
+            plugins: [RevealHighlight, RevealMarkdown]
+        });
+    </script>
+</body>
+
+</html>
