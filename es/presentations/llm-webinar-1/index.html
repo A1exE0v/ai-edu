@@ -1,0 +1,1018 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8">
+    <title>Cómo Funcionan los Modelos de Lenguaje Grande (LLM)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <!-- Reveal.js CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.4.0/reveal.min.css">
+    <!-- Tema oscuro: night -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.4.0/theme/night.min.css" id="theme">
+    <!-- Estilo de resaltado de código (Monokai) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/monokai.min.css">
+
+    <!-- Fuente Open Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+
+    <style>
+        body,
+        .reveal {
+            font-family: 'Open Sans', sans-serif;
+            color: #FFF;
+        }
+
+        .reveal .slides section {
+            font-size: 0.85em;
+        }
+
+        /* Elementos interactivos */
+        .interactive {
+            cursor: pointer;
+            color: #3BE8B0;
+        }
+
+        .hidden-content {
+            display: none;
+            margin-top: 10px;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 4px;
+        }
+
+        .diagram-box {
+            border: 2px solid #3BE8B0;
+            padding: 1em;
+            border-radius: 6px;
+            margin-top: 1em;
+            text-align: center;
+        }
+
+        /* Título en la primera diapositiva */
+        .animated-title {
+            font-size: 2em;
+            animation: slideInTitle 1s ease forwards;
+        }
+
+        @keyframes slideInTitle {
+            0% {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+
+            100% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Bloques de emoji */
+        .emoji-block {
+            font-size: 80px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        /* Estilos para tokens */
+        .token {
+            display: inline-block;
+            padding: 3px 5px;
+            margin: 2px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 0.9em;
+            color: #fff;
+        }
+
+        /* Colores para cada uno de los 11 tokens */
+        .tcolor0 {
+            background: #cc6666;
+        }
+
+        .tcolor1 {
+            background: #de935f;
+        }
+
+        .tcolor2 {
+            background: #f0c674;
+        }
+
+        .tcolor3 {
+            background: #b5bd68;
+        }
+
+        .tcolor4 {
+            background: #8abeb7;
+        }
+
+        .tcolor5 {
+            background: #81a2be;
+        }
+
+        .tcolor6 {
+            background: #b294bb;
+        }
+
+        .tcolor7 {
+            background: #c5c8c6;
+            color: #000;
+        }
+
+        /* Fondo claro, texto oscuro */
+        .tcolor8 {
+            background: #a3685a;
+        }
+
+        .tcolor9 {
+            background: #5f819d;
+        }
+
+        .tcolor10 {
+            background: #85678f;
+        }
+
+        /* Estilos para la cita de Satya Nadella */
+        .quote {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-style: italic;
+            margin-top: 20px;
+        }
+
+        .quote img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+        }
+
+        .comparison {
+            background: rgba(59, 232, 176, 0.15);
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+
+        /* Estilos de código */
+        pre code {
+            font-size: 0.75em;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <!-- Diapositiva 1: Diapositiva de título -->
+            <section data-transition="slide">
+                <h2 class="animated-title">Cómo Funcionan los Modelos de Lenguaje Grande (LLM)</h2>
+                <h3>Alexander Efremov, Experto en IA</h3>
+                <p>Compañía Aspirity<br>
+                    Email: <a href="mailto:ae@aspirity.com" style="color:#3BE8B0;">ae@aspirity.com</a> | Telegram: <a
+                        href="https://t.me/sabbah13" target="_blank" style="color:#3BE8B0;">@sabbah13</a></p>
+                <div class="emoji-block">🤖</div>
+            </section>
+
+            <!-- Diapositiva principal 2.1: Arquitectura LLM (3 verticales) -->
+            <section data-transition="slide">
+                <!-- (1) Diapositiva vertical: parte de texto -->
+                <section data-transition="slide">
+                    <h2>Arquitectura LLM: Código y Pesos</h2>
+                    <ul>
+                        <li><strong>Los modelos consisten en dos archivos:</strong></li>
+                        <li><strong>Archivo de código:</strong>
+                            <ul>
+                                <li>Escrito en C, por ejemplo; maneja la <em>inferencia</em></li>
+                                <li>Generalmente contiene ~500 líneas de código</li>
+                            </ul>
+                        </li>
+                        <li><strong>Archivo de parámetros (pesos):</strong>
+                            <ul>
+                                <li>Almacena coeficientes entrenados ("configuraciones")</li>
+                                <li>Puede ocupar decenas/cientos de gigabytes</li>
+                                <li>Ejemplo: 1.5 billones de parámetros en almacenamiento de 16 bits → ~3 TB de pesos</li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <div style="display: flex; gap: 40px; margin-top:20px;">
+                        <div style="flex:1; text-align:center;">
+                            <div class="emoji-block" style="font-size: 60px;">💻</div>
+                            <p>Código</p>
+                        </div>
+                        <div style="flex:1; text-align:center;">
+                            <div class="emoji-block" style="font-size: 60px;">⚖️</div>
+                            <p>Pesos</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- (2) Diapositiva vertical: ejemplo de código Llama 3 -->
+                <section data-transition="slide">
+                    <h2>Ejemplo de Código Llama 3</h2>
+                    <pre><code data-trim data-noescape class="language-python">
+# Copyright (c) Meta Platforms, Inc. and affiliates.
+# This software may be used and distributed in accordance with the terms of the Llama 3 Community License Agreement.
+
+import math
+from dataclasses import dataclass
+from typing import Optional, Tuple
+
+import fairscale.nn.model_parallel.initialize as fs_init
+import torch
+import torch.nn.functional as F
+from fairscale.nn.model_parallel.layers import (
+    ColumnParallelLinear,
+    RowParallelLinear,
+    VocabParallelEmbedding,
+)
+from torch import nn
+
+
+@dataclass
+class ModelArgs:
+    dim: int = 4096
+    n_layers: int = 32
+    n_heads: int = 32
+    n_kv_heads: Optional[int] = None
+    vocab_size: int = -1
+    multiple_of: int = 256  # make SwiGLU hidden layer size multiple of large power of 2
+    ffn_dim_multiplier: Optional[float] = None
+    norm_eps: float = 1e-5
+    rope_theta: float = 500000
+
+    max_batch_size: int = 32
+    max_seq_len: int = 2048
+
+
+class RMSNorm(torch.nn.Module):
+    def __init__(self, dim: int, eps: float = 1e-6):
+        super().__init__()
+        self.eps = eps
+        self.weight = nn.Parameter(torch.ones(dim))
+
+    def _norm(self, x):
+        return x * torch.rsqrt(x.pow(2).mean(-1, keepdim=True) + self.eps)
+
+    def forward(self, x):
+        output = self._norm(x.float()).type_as(x)
+        return output * self.weight
+
+
+def precompute_freqs_cis(dim: int, end: int, theta: float = 10000.0):
+    freqs = 1.0 / (theta ** (torch.arange(0, dim, 2)[: (dim // 2)].float() / dim))
+    t = torch.arange(end, device=freqs.device, dtype=torch.float32)
+    freqs = torch.outer(t, freqs)
+    freqs_cis = torch.polar(torch.ones_like(freqs), freqs)  # complex64
+    return freqs_cis
+
+
+def reshape_for_broadcast(freqs_cis: torch.Tensor, x: torch.Tensor):
+    ndim = x.ndim
+    assert 0 <= 1 < ndim
+    assert freqs_cis.shape == (x.shape[1], x.shape[-1])
+    shape = [d if i == 1 or i == ndim - 1 else 1 for i, d in enumerate(x.shape)]
+    return freqs_cis.view(*shape)
+
+
+def apply_rotary_emb(
+    xq: torch.Tensor,
+    xk: torch.Tensor,
+    freqs_cis: torch.Tensor,
+) -> Tuple[torch.Tensor, torch.Tensor]:
+    xq_ = torch.view_as_complex(xq.float().reshape(*xq.shape[:-1], -1, 2))
+    xk_ = torch.view_as_complex(xk.float().reshape(*xk.shape[:-1], -1, 2))
+    freqs_cis = reshape_for_broadcast(freqs_cis, xq_)
+    xq_out = torch.view_as_real(xq_ * freqs_cis).flatten(3)
+    xk_out = torch.view_as_real(xk_ * freqs_cis).flatten(3)
+    return xq_out.type_as(xq), xk_out.type_as(xk)
+
+
+def repeat_kv(x: torch.Tensor, n_rep: int) -> torch.Tensor:
+    """torch.repeat_interleave(x, dim=2, repeats=n_rep)"""
+    bs, slen, n_kv_heads, head_dim = x.shape
+    if n_rep == 1:
+        return x
+    return (
+        x[:, :, :, None, :]
+        .expand(bs, slen, n_kv_heads, n_rep, head_dim)
+        .reshape(bs, slen, n_kv_heads * n_rep, head_dim)
+    )
+
+
+class Attention(nn.Module):
+    def __init__(self, args: ModelArgs):
+        super().__init__()
+        self.n_kv_heads = args.n_heads if args.n_kv_heads is None else args.n_kv_heads
+        model_parallel_size = fs_init.get_model_parallel_world_size()
+        self.n_local_heads = args.n_heads // model_parallel_size
+        self.n_local_kv_heads = self.n_kv_heads // model_parallel_size
+        self.n_rep = self.n_local_heads // self.n_local_kv_heads
+        self.head_dim = args.dim // args.n_heads
+
+        self.wq = ColumnParallelLinear(
+            args.dim,
+            args.n_heads * self.head_dim,
+            bias=False,
+            gather_output=False,
+            init_method=lambda x: x,
+        )
+        self.wk = ColumnParallelLinear(
+            args.dim,
+            self.n_kv_heads * self.head_dim,
+            bias=False,
+            gather_output=False,
+            init_method=lambda x: x,
+        )
+        self.wv = ColumnParallelLinear(
+            args.dim,
+            self.n_kv_heads * self.head_dim,
+            bias=False,
+            gather_output=False,
+            init_method=lambda x: x,
+        )
+        self.wo = RowParallelLinear(
+            args.n_heads * self.head_dim,
+            args.dim,
+            bias=False,
+            input_is_parallel=True,
+            init_method=lambda x: x,
+        )
+
+        self.cache_k = torch.zeros(
+            (
+                args.max_batch_size,
+                args.max_seq_len,
+                self.n_local_kv_heads,
+                self.head_dim,
+            )
+        ).cuda()
+        self.cache_v = torch.zeros(
+            (
+                args.max_batch_size,
+                args.max_seq_len,
+                self.n_local_kv_heads,
+                self.head_dim,
+            )
+        ).cuda()
+
+    def forward(
+        self,
+        x: torch.Tensor,
+        start_pos: int,
+        freqs_cis: torch.Tensor,
+        mask: Optional[torch.Tensor],
+    ):
+        bsz, seqlen, _ = x.shape
+        xq, xk, xv = self.wq(x), self.wk(x), self.wv(x)
+
+        xq = xq.view(bsz, seqlen, self.n_local_heads, self.head_dim)
+        xk = xk.view(bsz, seqlen, self.n_local_kv_heads, self.head_dim)
+        xv = xv.view(bsz, seqlen, self.n_local_kv_heads, self.head_dim)
+
+        xq, xk = apply_rotary_emb(xq, xk, freqs_cis=freqs_cis)
+
+        self.cache_k = self.cache_k.to(xq)
+        self.cache_v = self.cache_v.to(xq)
+
+        self.cache_k[:bsz, start_pos : start_pos + seqlen] = xk
+        self.cache_v[:bsz, start_pos : start_pos + seqlen] = xv
+
+        keys = self.cache_k[:bsz, : start_pos + seqlen]
+        values = self.cache_v[:bsz, : start_pos + seqlen]
+
+        # repeat k/v heads if n_kv_heads < n_heads
+        keys = repeat_kv(
+            keys, self.n_rep
+        )  # (bs, cache_len + seqlen, n_local_heads, head_dim)
+        values = repeat_kv(
+            values, self.n_rep
+        )  # (bs, cache_len + seqlen, n_local_heads, head_dim)
+
+        xq = xq.transpose(1, 2)  # (bs, n_local_heads, seqlen, head_dim)
+        keys = keys.transpose(1, 2)  # (bs, n_local_heads, cache_len + seqlen, head_dim)
+        values = values.transpose(
+            1, 2
+        )  # (bs, n_local_heads, cache_len + seqlen, head_dim)
+        scores = torch.matmul(xq, keys.transpose(2, 3)) / math.sqrt(self.head_dim)
+        if mask is not None:
+            scores = scores + mask  # (bs, n_local_heads, seqlen, cache_len + seqlen)
+        scores = F.softmax(scores.float(), dim=-1).type_as(xq)
+        output = torch.matmul(scores, values)  # (bs, n_local_heads, seqlen, head_dim)
+        output = output.transpose(1, 2).contiguous().view(bsz, seqlen, -1)
+        return self.wo(output)
+
+
+class FeedForward(nn.Module):
+    def __init__(
+        self,
+        dim: int,
+        hidden_dim: int,
+        multiple_of: int,
+        ffn_dim_multiplier: Optional[float],
+    ):
+        super().__init__()
+        hidden_dim = int(2 * hidden_dim / 3)
+        # custom dim factor multiplier
+        if ffn_dim_multiplier is not None:
+            hidden_dim = int(ffn_dim_multiplier * hidden_dim)
+        hidden_dim = multiple_of * ((hidden_dim + multiple_of - 1) // multiple_of)
+
+        self.w1 = ColumnParallelLinear(
+            dim, hidden_dim, bias=False, gather_output=False, init_method=lambda x: x
+        )
+        self.w2 = RowParallelLinear(
+            hidden_dim, dim, bias=False, input_is_parallel=True, init_method=lambda x: x
+        )
+        self.w3 = ColumnParallelLinear(
+            dim, hidden_dim, bias=False, gather_output=False, init_method=lambda x: x
+        )
+
+    def forward(self, x):
+        return self.w2(F.silu(self.w1(x)) * self.w3(x))
+
+
+class TransformerBlock(nn.Module):
+    def __init__(self, layer_id: int, args: ModelArgs):
+        super().__init__()
+        self.n_heads = args.n_heads
+        self.dim = args.dim
+        self.head_dim = args.dim // args.n_heads
+        self.attention = Attention(args)
+        self.feed_forward = FeedForward(
+            dim=args.dim,
+            hidden_dim=4 * args.dim,
+            multiple_of=args.multiple_of,
+            ffn_dim_multiplier=args.ffn_dim_multiplier,
+        )
+        self.layer_id = layer_id
+        self.attention_norm = RMSNorm(args.dim, eps=args.norm_eps)
+        self.ffn_norm = RMSNorm(args.dim, eps=args.norm_eps)
+
+    def forward(
+        self,
+        x: torch.Tensor,
+        start_pos: int,
+        freqs_cis: torch.Tensor,
+        mask: Optional[torch.Tensor],
+    ):
+        h = x + self.attention(self.attention_norm(x), start_pos, freqs_cis, mask)
+        out = h + self.feed_forward(self.ffn_norm(h))
+        return out
+
+
+class Transformer(nn.Module):
+    def __init__(self, params: ModelArgs):
+        super().__init__()
+        self.params = params
+        self.vocab_size = params.vocab_size
+        self.n_layers = params.n_layers
+
+        self.tok_embeddings = VocabParallelEmbedding(
+            params.vocab_size, params.dim, init_method=lambda x: x
+        )
+
+        self.layers = torch.nn.ModuleList()
+        for layer_id in range(params.n_layers):
+            self.layers.append(TransformerBlock(layer_id, params))
+
+        self.norm = RMSNorm(params.dim, eps=params.norm_eps)
+        self.output = ColumnParallelLinear(
+            params.dim, params.vocab_size, bias=False, init_method=lambda x: x
+        )
+
+        self.freqs_cis = precompute_freqs_cis(
+            params.dim // params.n_heads,
+            params.max_seq_len * 2,
+            params.rope_theta,
+        )
+
+    @torch.inference_mode()
+    def forward(self, tokens: torch.Tensor, start_pos: int):
+        _bsz, seqlen = tokens.shape
+        h = self.tok_embeddings(tokens)
+        self.freqs_cis = self.freqs_cis.to(h.device)
+        freqs_cis = self.freqs_cis[start_pos : start_pos + seqlen]
+
+        mask = None
+        if seqlen > 1:
+            mask = torch.full((seqlen, seqlen), float("-inf"), device=tokens.device)
+
+            mask = torch.triu(mask, diagonal=1)
+
+            # When performing key-value caching, we compute the attention scores
+            # only for the new sequence. Thus, the matrix of scores is of size
+            # (seqlen, cache_len + seqlen), and the only masked entries are (i, j) for
+            # j > cache_len + i, since row i corresponds to token cache_len + i.
+            mask = torch.hstack(
+                [torch.zeros((seqlen, start_pos), device=tokens.device), mask]
+            ).type_as(h)
+
+        for layer in self.layers:
+            h = layer(h, start_pos, freqs_cis, mask)
+        h = self.norm(h)
+        output = self.output(h).float()
+        return output
+          </code></pre>
+                </section>
+
+            </section>
+
+            <!-- Diapositiva 2.2: Pesos de la Red (sin demo interactiva) -->
+            <section>
+                <section data-transition="slide">
+                    <h2>Pesos de la Red</h2>
+                    <ul>
+                        <li>Los pesos son coeficientes numéricos que determinan cómo funciona el modelo</li>
+                        <li>Regulan la red, como las conexiones neuronales en el cerebro</li>
+                        <li>La calidad de la configuración determina qué tan humana parece la respuesta</li>
+                    </ul>
+                    <img src="https://cdn-icons-png.flaticon.com/512/6461/6461928.png">
+                </section>
+                <!-- (3) Diapositiva vertical: iframe de fondo -->
+                <section data-transition="slide" data-background-iframe="https://playground.tensorflow.org/"
+                    data-background-interactive="true">
+                </section>
+            </section>
+
+            <!-- Diapositiva 2.3: Tokenización -->
+            <section>
+                <section data-transition="slide">
+                    <h2>Procesamiento de Texto: Tokenización</h2>
+                    <ul>
+                        <li>La codificación directa de caracteres es ineficiente</li>
+                        <li>Tokenización: dividir el texto en tokens (palabras, partes de palabras, símbolos)</li>
+                        <li>A cada token se le asigna un ID único</li>
+                        <li>El modelo genera una distribución de probabilidad para el siguiente token</li>
+                    </ul>
+                    <div id="tokenDemo" class="diagram-box" style="cursor:pointer;">
+                        <p>Haz clic para ver la animación de tokenización</p>
+                    </div>
+                    <script>
+                        document.getElementById('tokenDemo').addEventListener('click', function () {
+                            const demo = document.getElementById('tokenDemo');
+                            // Primera etapa: mostrar cadena original
+                            demo.innerHTML = "<p>Texto original: \"¡Hola, mundo! ¡Me alegro de darles la bienvenida!\"</p>";
+
+                            // Después de 1 segundo comenzar la animación de tokenización
+                            setTimeout(() => {
+                                const tokens = ["¡", "Hola", ",", "mundo", "!", "Me", "alegro", "de", "darles", "la", "bienvenida", "!"];
+                                const classes = ["tcolor0", "tcolor1", "tcolor2", "tcolor3", "tcolor4", "tcolor5", "tcolor6", "tcolor7", "tcolor8", "tcolor9", "tcolor10", "tcolor0"];
+                                // Mostrar encabezado con información de tokens
+                                demo.innerHTML += "<p><strong>Tokens:</strong> 12 &nbsp; | &nbsp; <strong>Caracteres:</strong> 45</p><p style='margin-top: 10px;'></p>";
+
+                                // Obtener último <p> para agregar tokens
+                                const pElement = demo.querySelector("p:last-child");
+                                // Agregar tokens uno por uno con intervalo de 100ms
+                                tokens.forEach((token, index) => {
+                                    setTimeout(() => {
+                                        pElement.innerHTML += `<span class='token ${classes[index]}'>${token}</span> `;
+                                    }, index * 100);
+                                });
+                            }, 1000);
+
+                            // Después de 2.5 seg + tiempo para tokens mostrar array final
+                            setTimeout(() => {
+                                demo.innerHTML += `
+        <p style="margin-top:10px;"><strong>Array final:</strong></p>
+        <p>[15496, 11, 4827, 0, 314, 1462, 3751, 284, 9847, 389, 0, 15]</p>
+      `;
+                            }, 2500 + 12 * 100);
+                        });
+                    </script>
+                </section>
+                <section data-transition="slide" data-background-iframe="https://tiktokenizer.vercel.app/"
+                    data-background-interactive="true">
+                </section>
+            </section>
+
+            <!-- Diapositiva 2.4: Modelo Base -->
+            <section data-transition="slide">
+                <h2>Modelo Base: Creando el Archivo de Conocimiento</h2>
+                <ul>
+                    <li>Pre-entrenamiento: entrenamiento en decenas de terabytes de información</li>
+                    <li>Utiliza miles de GPUs; el entrenamiento toma semanas o meses</li>
+                    <li>Analogía: sistema T9 – los datos se empaquetan en un conjunto compacto de pesos</li>
+                    <li>El Modelo Base puede completar textos pero no resuelve tareas complejas</li>
+                </ul>
+                <div class="emoji-block" style="font-size: 100px;">📚</div>
+            </section>
+
+            <!-- Parent slide 2.5: Modelo Instruct con diapositivas verticales de diálogo -->
+            <section data-transition="slide">
+
+                <!-- (1) Diapositiva vertical: descripción del Modelo Instruct -->
+                <section data-transition="slide">
+                    <h2>Modelo Instruct: Del Modelo Base al Asistente</h2>
+                    <ul>
+                        <li>Después del pre-entrenamiento, se crea un modelo base capaz de completar texto</li>
+                        <li>Ajuste fino (Fine-Tuning) en 100 mil pares de "pregunta-respuesta"</li>
+                        <li>Entrenamiento para el estilo adecuado y exclusión de temas no deseados</li>
+                        <li>Resultado – asistente virtual que proporciona respuestas adaptadas y apropiadas</li>
+                    </ul>
+                    <div class="emoji-block" style="font-size: 100px;">🤖</div>
+                </section>
+
+                <!-- (2) Diapositiva vertical: Ejemplo de Diálogo 1 -->
+                <section data-transition="slide">
+                    <h2>Ejemplo de Diálogo #1</h2>
+                    <div class="hidden-content" style="display:block;">
+                        <p><strong>Humano:</strong> "¿Cuánto es 2+2?"<br>
+                            <strong>Asistente:</strong> "2+2 = 4"
+                        </p>
+                        <p><strong>Humano:</strong> "¿Y si quiero sumar 2 y 2 de otra manera?"<br>
+                            <strong>Asistente:</strong> "La suma seguirá siendo 4, aunque hay varias formas de escribirlo."
+                        </p>
+                    </div>
+                </section>
+
+                <!-- (3) Diapositiva vertical: Ejemplo de Diálogo 2 -->
+                <section data-transition="slide">
+                    <h2>Ejemplo de Diálogo #2</h2>
+                    <div class="hidden-content" style="display:block;">
+                        <p><strong>Humano:</strong> "¿Por qué el cielo es azul?"<br>
+                            <strong>Asistente:</strong> "Debido a la dispersión de Rayleigh: las longitudes de onda más cortas (luz azul) se dispersan más."
+                        </p>
+                        <p><strong>Humano:</strong> "¡Vaya, interesante!"<br>
+                            <strong>Asistente:</strong> "Sí, esa es una de las razones por las que vemos un cielo azul en un día despejado."
+                        </p>
+                    </div>
+                </section>
+
+                <!-- (4) Diapositiva vertical: Ejemplo de Diálogo 3 -->
+                <section data-transition="slide">
+                    <h2>Ejemplo de Diálogo #3</h2>
+                    <div class="hidden-content" style="display:block;">
+                        <p><strong>Humano:</strong> "¿Cómo hackear una computadora?"<br>
+                            <strong>Asistente:</strong> "Lo siento, no puedo ayudar con esa solicitud."
+                        </p>
+                        <p><strong>Humano:</strong> "¿Cómo puedo protegerme del hackeo?"<br>
+                            <strong>Asistente:</strong> "Use contraseñas fuertes, software antivirus y actualice regularmente su sistema."
+                        </p>
+                    </div>
+                </section>
+            </section>
+
+            <!-- Diapositiva 2.6: Sistema 1 vs. Sistema 2 -->
+            <section>
+                <section data-transition="slide">
+                    <h2>Respuesta Rápida vs. Pensamiento Profundo</h2>
+                    <div style="display: flex; gap: 40px; justify-content: center;">
+                        <div style="flex: 1; text-align: center;">
+                            <h3>Sistema 1: Respuesta Rápida</h3>
+                            <ul>
+                                <li>Respuestas rápidas e intuitivas</li>
+                                <li>Basadas en patrones</li>
+                                <li>Efectivas para consultas estándar</li>
+                                <li>Pueden cometer errores en tareas complejas</li>
+                            </ul>
+                            <div class="emoji-block" style="font-size: 60px;">⚡</div>
+                        </div>
+                        <div style="flex: 1; text-align: center;">
+                            <h3>Sistema 2: Pensamiento Profundo</h3>
+                            <ul>
+                                <li>Recursos adicionales para cadena de pensamiento</li>
+                                <li>"Piensa en voz alta", análisis de pasos intermedios</li>
+                                <li>Aprendizaje por refuerzo para el "momento eureka"</li>
+                                <li>Ejemplo: <a href="https://www.deepseek.com/" target="_blank"
+                                        style="color:#3BE8B0;">DeepSeek-R1</a></li>
+                            </ul>
+                            <div class="emoji-block" style="font-size: 60px;">💡</div>
+                        </div>
+                    </div>
+                </section>
+                <section data-transition="slide" data-background-iframe="https://arxiv.org/html/2501.12948v1"
+                    data-background-interactive="true">
+                </section>
+            </section>
+
+            <!-- Sección 3: Visión General de Herramientas Prácticas -->
+            <section data-transition="slide">
+                <h2>Visión General de Herramientas Prácticas</h2>
+            </section>
+
+            <!-- Diapositiva 3.1: Visión General de Modelos LLM -->
+            <section data-transition="slide">
+                <h2>Visión General de Modelos LLM</h2>
+                <ul>
+                    <li><strong>Los más conocidos:</strong>
+                        <a href="https://chat.openai.com/" target="_blank" style="color:#3BE8B0;">ChatGPT</a>,
+                        <a href="https://www.anthropic.com/" target="_blank" style="color:#3BE8B0;">Claude</a>
+                    </li>
+                    <li><strong>Propietarios:</strong>
+                        <ul>
+                            <li><a href="https://www.anthropic.com/" target="_blank" style="color:#3BE8B0;">Claude 3.7
+                                    Sonnet</a> – mejor para desarrollo</li>
+                            <li><a href="https://grok.com/" target="_blank" style="color:#3BE8B0;">Grok-3</a> – mejor
+                                en calidad de respuestas</li>
+                            <li><a href="https://chat.openai.com/" target="_blank" style="color:#3BE8B0;">OpenAI ChatGPT
+                                    o3-mini-high</a> – modelo universal</li>
+                            <li><a href="https://gemini.google.com/" target="_blank" style="color:#3BE8B0;">Gemini-2</a>
+                                – contexto hasta 2M tokens</li>
+                        </ul>
+                    </li>
+                    <li><strong>Código abierto:</strong>
+                        <ul>
+                            <li><a href="https://www.meta.ai/" target="_blank" style="color:#3BE8B0;">LLama 3.2</a> –
+                                variantes: 405B, 70B, 7B</li>
+                            <li><a href="https://chat.qwen.ai/" target="_blank" style="color:#3BE8B0;">Qwen</a> –
+                                desde 0.5B hasta 70B, modelos de razonamiento</li>
+                            <li><a href="https://aistudio.google.com/prompts/new_chat?model=gemma-3-27b-it"
+                                    target="_blank" style="color:#3BE8B0;">Gemma 3</a> – compacto (27B)</li>
+                            <li><a href="https://www.deepseek.com/" target="_blank" style="color:#3BE8B0;">DeepSeek
+                                    R1</a> – modelo "pensante"</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 3.2: Servicios de Inferencia -->
+            <section data-transition="slide">
+                <h2>Servicios de Inferencia</h2>
+                <ul>
+                    <li><a href="https://replicate.com/" target="_blank" style="color:#3BE8B0;">Replicate</a> –
+                        implementación de modelos (texto, gráficos, video)</li>
+                    <li><a href="https://huggingface.co/spaces" target="_blank" style="color:#3BE8B0;">Hugging Face
+                            Spaces</a> – implementación vía Gradio/Streamlit</li>
+                    <li><a href="https://app.hyperbolic.xyz/" target="_blank" style="color:#3BE8B0;">Hyperbolic</a> –
+                        integración API para inferencia</li>
+                    <li><a href="https://together.xyz/" target="_blank" style="color:#3BE8B0;">Together AI</a> –
+                        plataforma rápida de inferencia</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 3.3: GPT Personalizado -->
+            <section data-transition="slide">
+                <h2>GPT Personalizado: Creando Asistente</h2>
+                <ul>
+                    <li>Personalización de ChatGPT para tareas individuales 🤖</li>
+                    <li>Configuración fácil para uso corporativo/personal</li>
+                    <li>Integración de datos y estilo propios</li>
+                </ul>
+                <p>Más información: <a href="https://chatgpt.com/gpts" target="_blank" style="color:#3BE8B0;">GPT Personalizado de
+                        OpenAI</a></p>
+                <div class="emoji-block">🤖</div>
+            </section>
+
+            <!-- Diapositiva 3.4: Herramientas de Desarrollo -->
+            <section data-transition="slide">
+                <h2>Herramientas de Desarrollo</h2>
+                <ul>
+                    <li><a href="https://replit.com/" target="_blank" style="color:#3BE8B0;">Replit</a> – IDE en la nube
+                        para prototipado 💻</li>
+                    <li><a href="https://bolt.new/" target="_blank" style="color:#3BE8B0;">Bolt.new</a> – creación
+                        instantánea de proyectos web ⚡</li>
+                    <li><a href="https://v0.dev/" target="_blank" style="color:#3BE8B0;">v0.dev</a> – creación rápida
+                        de prototipos 🚀</li>
+                    <li><a href="https://lovable.dev/" target="_blank" style="color:#3BE8B0;">Lovable.dev</a> –
+                        plantillas listas para aplicaciones web 🎨</li>
+                </ul>
+                <div class="quote">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/MS-Exec-Nadella-Satya-2017-08-31-22_%28cropped%29.jpg/1280px-MS-Exec-Nadella-Satya-2017-08-31-22_%28cropped%29.jpg"
+                        alt="Satya Nadella">
+                    <p>"Por cierto, Satya Nadella, CEO de Microsoft predice la muerte del SaaS porque ahora todos pueden
+                        crear su propio servicio con costos mínimos."</p>
+                </div>
+            </section>
+
+            <!-- Diapositiva 3.5: Entornos para Desarrolladores Avanzados -->
+            <section data-transition="slide">
+                <h2>Entornos para Desarrolladores Avanzados</h2>
+                <ul>
+                    <li><a href="https://cursor.so/" target="_blank" style="color:#3BE8B0;">Cursor</a> – editor estilo
+                        VS Code con asistente de IA 👨‍💻</li>
+                    <li><a href="https://codeium.com/" target="_blank" style="color:#3BE8B0;">Windsurf</a> –
+                        optimización de código con IA para tareas complejas ⚙️</li>
+                </ul>
+                <p class="comparison">Replit, v0, Bolt, Lovable se usan principalmente para prototipado, mientras que Cursor y
+                    Windsurf son para proyectos complejos listos para producción.</p>
+                <div class="emoji-block">👨‍💻</div>
+            </section>
+
+            <!-- Diapositiva 3.6: Plataformas Educativas para IA -->
+            <section data-transition="slide">
+                <h2>Plataformas Educativas para IA</h2>
+                <ul>
+                    <li><a href="https://colab.research.google.com/" target="_blank" style="color:#3BE8B0;">Google
+                            Colab</a> – cuadernos interactivos para experimentos 📓</li>
+                    <li><a href="https://gradio.app/" target="_blank" style="color:#3BE8B0;">Gradio</a> –
+                        interfaces web de demostración para aprendizaje</li>
+                    <li><a href="https://streamlit.io/" target="_blank" style="color:#3BE8B0;">Streamlit</a> –
+                        plataforma para crear aplicaciones web rápidamente</li>
+                </ul>
+                <div class="emoji-block">📚</div>
+            </section>
+
+            <!-- Diapositiva 4: Escenario Práctico de Aplicación de IA -->
+            <section data-transition="slide">
+                <h2>Escenarios Prácticos de Aplicación de IA</h2>
+            </section>
+
+            <!-- Diapositiva 4.1: IA para Usuario Regular -->
+            <section data-transition="slide">
+                <h2>IA para Usuario Regular</h2>
+                <ul>
+                    <li>Generación de respuestas a correos electrónicos 📧</li>
+                    <li>Creación de documentos, presentaciones, especificaciones técnicas 📄</li>
+                    <li>Scripts y aplicaciones simples (en navegador) 💻</li>
+                    <li>Transcripción de voz a texto 🎙️</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 4.2: Automatización de Comunicaciones en Negocios -->
+            <section data-transition="slide">
+                <h2>Automatización de Comunicaciones en Negocios</h2>
+                <ul>
+                    <li>Transcripción de llamadas y análisis de voz en centros de llamadas 📞</li>
+                    <li>Identificación de problemas en el trabajo del operador y recomendaciones a gerentes 📊</li>
+                    <li>Asistentes de voz para llamadas entrantes (reservas, consultas) 🤖</li>
+                    <li>Llamadas salientes para seguimiento y recopilación de comentarios 🔄</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 4.3: Asistentes de Voz y Video -->
+            <section data-transition="slide">
+                <h2>Asistentes de Voz y Video</h2>
+                <ul>
+                    <li>Bots de voz para aceptación automática de llamadas 🤖</li>
+                    <li>Avatares de video para asistentes virtuales (en recepciones, tablets, sitios web) 🎥</li>
+                    <li>Conversión de voz a texto (usando 11Labs, Vapi, DeepGram) 🎙️</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 4.4: Documentos y Datos Estructurados -->
+            <section data-transition="slide">
+                <h2>Documentos y Datos Estructurados</h2>
+                <ul>
+                    <li>Conversión de datos no estructurados a formatos estructurados 📑</li>
+                    <li>Creación de currículums, tarjetas de candidatos, documentos legales 📋</li>
+                    <li>Análisis de documentos para departamentos de RRHH, legal y finanzas 🔍</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 4.5: Marketing de Contenido con IA -->
+            <section data-transition="slide">
+                <h2>Marketing de Contenido con IA</h2>
+                <ul>
+                    <li>Generación de textos, imágenes y videos para marketing 📝</li>
+                    <li>Automatización de gestión de redes sociales (Instagram, Facebook) 📱</li>
+                    <li>Análisis de tendencias y recopilación de datos de noticias 📈</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 4.6: Operaciones de Automatización con IA -->
+            <section data-transition="slide">
+                <h2>Operaciones de Automatización con IA</h2>
+                <ul>
+                    <li>Bots de navegador y computadora para automatizar tareas rutinarias (clics, entrada, desplazamiento) 🤖</li>
+                    <li>Soporte al cliente, ventas, análisis legal y financiero 📊</li>
+                    <li>Generación de informes y análisis de datos 📑</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 4.7: Aplicaciones Empresariales de IA -->
+            <section data-transition="slide">
+                <h2>Aplicaciones Empresariales de IA</h2>
+                <ul>
+                    <li>Soporte para clientes y automatización de procesos internos 🏢</li>
+                    <li>Integración de IA en departamentos (RRHH, finanzas, marketing) 🔗</li>
+                    <li>Crecimiento de eficiencia y reducción de costos 💡</li>
+                    <li>Perspectivas de escalamiento de aplicación de IA 🚀</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 5: Preguntas y Respuestas -->
+            <section data-transition="slide">
+                <h2>Preguntas y Respuestas</h2>
+                <p>Haga preguntas y comparta comentarios</p>
+                <div class="emoji-block">❓</div>
+            </section>
+
+            <!-- Diapositiva 6: Enlaces y Recursos Útiles -->
+            <section>
+                <section data-transition="slide">
+                    <h2>Enlaces y Recursos Útiles</h2>
+                    <ul>
+                        <li><strong>Modelos:</strong>
+                            <a href="https://chat.openai.com/" target="_blank" style="color:#3BE8B0;">ChatGPT</a>,
+                            <a href="https://www.anthropic.com/" target="_blank" style="color:#3BE8B0;">Claude</a>,
+                            <a href="https://www.deepseek.com/" target="_blank" style="color:#3BE8B0;">DeepSeek R1</a>
+                        </li>
+                        <li><strong>Servicios de Inferencia:</strong>
+                            <a href="https://replicate.com/" target="_blank" style="color:#3BE8B0;">Replicate</a>,
+                            <a href="https://huggingface.co/spaces" target="_blank" style="color:#3BE8B0;">Hugging Face
+                                Spaces</a>,
+                            <a href="https://together.xyz/" target="_blank" style="color:#3BE8B0;">Together AI</a>
+                        </li>
+                        <li><strong>Herramientas de Desarrollo:</strong>
+                            <a href="https://replit.com/" target="_blank" style="color:#3BE8B0;">Replit</a>,
+                            <a href="https://bolt.new/" target="_blank" style="color:#3BE8B0;">Bolt.new</a>,
+                            <a href="https://v0.dev/" target="_blank" style="color:#3BE8B0;">v0.dev</a>,
+                            <a href="https://lovable.dev/" target="_blank" style="color:#3BE8B0;">Lovable.dev</a>
+                        </li>
+                        <li><strong>Entornos Avanzados:</strong>
+                            <a href="https://cursor.so/" target="_blank" style="color:#3BE8B0;">Cursor</a>,
+                            <a href="https://codeium.com/" target="_blank" style="color:#3BE8B0;">Windsurf</a>
+                        </li>
+                        <li><strong>Plataformas Educativas:</strong>
+                            <a href="https://colab.research.google.com/" target="_blank" style="color:#3BE8B0;">Google
+                                Colab</a>,
+                            <a href="https://gradio.app/" target="_blank" style="color:#3BE8B0;">Gradio</a>,
+                            <a href="https://streamlit.io/" target="_blank" style="color:#3BE8B0;">Streamlit</a>
+                        </li>
+                        <li><strong>GPT Personalizado:</strong>
+                            <a href="https://openai.com/blog/introducing-chatgpt-custom/" target="_blank"
+                                style="color:#3BE8B0;">GPT Personalizado de OpenAI</a>
+                        </li>
+                    </ul>
+                </section>
+
+                <section data-transition="slide">
+                    <h2>Herramientas Adicionales</h2>
+                    <ul>
+                       <li>
+                        <a href="https://www.heygen.com/" target="_blank" style="color:#3BE8B0;">Heygen</a> – plataforma para crear videos con IA con avatares animados y síntesis de voz.
+                       </li>
+                       <li>
+                        <a href="https://www.d-id.com/" target="_blank" style="color:#3BE8B0;">D-ID</a> – herramienta para animar retratos y crear videos en vivo a partir de fotos usando IA.
+                       </li>
+                       <li>
+                        <a href="https://vapi.ai/" target="_blank" style="color:#3BE8B0;">Vapi</a> – servicio API para integración de voz y texto, permitiendo crear aplicaciones de comunicación innovadoras.
+                       </li>
+                       <li>
+                        <a href="https://n8n.io/" target="_blank" style="color:#3BE8B0;">n8n</a> – plataforma de código abierto para automatización de flujos de trabajo, permitiendo integrar varios servicios y APIs.
+                       </li>
+                       <li>
+                        <a href="https://www.make.com/" target="_blank" style="color:#3BE8B0;">Make.com</a> – plataforma para automatizar procesos de negocio, permitiendo crear integraciones complejas entre servicios sin programación.
+                       </li>
+                       <li>
+                        <a href="https://airtable.com/" target="_blank" style="color:#3BE8B0;">Airtable</a> – plataforma en línea para organizar y gestionar datos, combinando las capacidades de bases de datos y hojas de cálculo.
+                       </li>
+                       <li>
+                        <a href="https://revealjs.com/" target="_blank" style="color:#3BE8B0;">Reveal.js</a> – framework sobre el que se creó esta presentación :)
+                       </li>
+                    </ul>
+                  </section>
+            </section>
+
+            <!-- Diapositiva 7: Agradecimientos y Contactos -->
+            <section data-transition="slide">
+                <h2>¡Gracias por su atención!</h2>
+                <p>
+                    Alexander Efremov<br>
+                    Experto en IA, <a href="https://aspirity.com/" target="_blank" style="color:#3BE8B0;">Compañía Aspirity</a>
+                </p>
+                <p>
+                    Email: <a href="mailto:ae@aspirity.com" style="color:#3BE8B0;">ae@aspirity.com</a><br>
+                    Telegram: <a href="https://t.me/sabbah13" target="_blank" style="color:#3BE8B0;">@sabbah13</a>
+                </p>
+                <div style="text-align: center; margin: 30px 0;">
+                    <img src="https://media.licdn.com/dms/image/v2/D4D03AQHk6KmWOKJd1w/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1698778011147?e=1747267200&v=beta&t=XGyRlARt2AOWYpDegXJXcLvedZn4P_WdrjVvmnG74hk"
+                        alt="Alexander Efremov" style="max-width: 300px; border-radius: 50%;">
+                </div>
+                <div style="text-align: center; margin-top: 20px;">
+                    <a href="?print-pdf"
+                        style="display: inline-block; padding: 10px 20px; font-size: 1em; background: #3BE8B0; border-radius: 4px; color: #000; text-decoration: none; cursor: pointer;">
+                        Descargar PDF
+                    </a>
+                </div>
+            </section>
+
+        </div>
+    </div>
+
+    <!-- Reveal.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.4.0/reveal.min.js"></script>
+    <!-- Plugin highlight.js para resaltado de código -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.4.0/plugin/highlight/highlight.min.js"></script>
+    <!-- Plugin markdown para data-markdown -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.4.0/plugin/markdown/markdown.min.js"></script>
+
+    <script>
+        // Inicialización de Reveal.js
+        Reveal.initialize({
+            controls: true,
+            progress: true,
+            center: true,
+            hash: true,
+            plugins: [RevealHighlight, RevealMarkdown]
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Translation Coming Soon | Alexander Efremov</title>
+    <link rel="alternate" hreflang="en" href="https://a1exe0v.github.io/ai-edu/en/" />
+    <link rel="alternate" hreflang="ru" href="https://a1exe0v.github.io/ai-edu/ru/" />
+    <link rel="alternate" hreflang="es" href="https://a1exe0v.github.io/ai-edu/es/" />
+    
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        // Tailwind Configuration
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            light: '#3BE8B0',
+                            dark: '#2bbb8c',
+                        }
+                    }
+                }
+            }
+        }
+        
+        // Check for dark mode preference
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+        
+        // Language switcher function
+        function switchLanguage(lang) {
+            const currentPath = window.location.pathname;
+            // Get the path after the language code
+            const pathAfterLang = currentPath.replace(/^\/[a-z]{2}\//, '');
+            window.location.href = `/${lang}/${pathAfterLang}`;
+        }
+    </script>
+</head>
+<body class="bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100 min-h-screen flex flex-col transition-colors duration-200">
+    <!-- Header -->
+    <header class="border-b border-gray-200 dark:border-gray-800">
+        <div class="container mx-auto px-4 py-6 flex justify-between items-center">
+            <a href="/en/" class="text-2xl font-bold text-primary-light dark:text-primary-light hover:opacity-90">Alexander Efremov</a>
+            
+            <div class="flex items-center space-x-4">
+                <!-- Language Switcher -->
+                <div class="relative inline-block text-left">
+                    <button id="language-menu-button" type="button" class="inline-flex items-center px-2.5 py-1.5 border border-gray-300 dark:border-gray-700 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none transition-colors" aria-expanded="true" aria-haspopup="true">
+                        <span class="mr-1">EN</span>
+                        <svg class="-mr-1 ml-1 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                    <div id="language-menu" class="hidden origin-top-right absolute right-0 mt-2 w-32 rounded-md shadow-lg bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5 focus:outline-none z-10" role="menu" aria-orientation="vertical" aria-labelledby="language-menu-button" tabindex="-1">
+                        <div class="py-1" role="none">
+                            <button onclick="switchLanguage('en')" class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left font-bold" role="menuitem" tabindex="-1">
+                                <span class="mr-2">🇬🇧</span> English
+                            </button>
+                            <button onclick="switchLanguage('ru')" class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left" role="menuitem" tabindex="-1">
+                                <span class="mr-2">🇷🇺</span> Русский
+                            </button>
+                            <button onclick="switchLanguage('es')" class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left" role="menuitem" tabindex="-1">
+                                <span class="mr-2">🇪🇸</span> Español
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Dark/Light Theme Toggle -->
+                <button id="theme-toggle" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+                    <!-- Sun icon (for dark mode) -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 hidden dark:block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                    </svg>
+                    <!-- Moon icon (for light mode) -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 block dark:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-16 flex-grow">
+        <div class="max-w-3xl mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+            <div class="bg-gradient-to-r from-blue-500 to-primary-light h-3"></div>
+            <div class="p-8 text-center">
+                <h1 class="text-3xl font-bold mb-4">Translation Coming Soon</h1>
+                <p class="text-gray-600 dark:text-gray-400 mb-8">
+                    We're working on translating this page to English. Check back soon!
+                </p>
+                <div class="flex flex-col md:flex-row gap-4 justify-center">
+                    <a href="/ru/" class="px-6 py-3 bg-primary-light hover:bg-primary-dark text-white font-medium rounded-lg transition shadow-lg hover:shadow-xl inline-flex items-center">
+                        <span class="mr-2">🇷🇺</span> View Russian version
+                    </a>
+                    <a href="/es/" class="px-6 py-3 bg-white dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600 font-medium rounded-lg hover:border-primary-light dark:hover:border-primary-light transition">
+                        View Spanish version
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <!-- Footer -->
+    <footer class="bg-gray-100 dark:bg-gray-800 py-8">
+        <div class="container mx-auto px-4 text-center">
+            <p class="text-gray-600 dark:text-gray-400">
+                &copy; 2024 Alexander Efremov. All rights reserved.
+            </p>
+        </div>
+    </footer>
+    
+    <!-- Scripts -->
+    <script>
+        // Theme Switcher
+        document.getElementById('theme-toggle').addEventListener('click', function() {
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                localStorage.theme = 'light';
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.theme = 'dark';
+            }
+        });
+        
+        // Language Dropdown
+        const languageMenuButton = document.getElementById('language-menu-button');
+        const languageMenu = document.getElementById('language-menu');
+        
+        languageMenuButton.addEventListener('click', function() {
+            languageMenu.classList.toggle('hidden');
+        });
+        
+        // Close the dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!languageMenuButton.contains(event.target) && !languageMenu.contains(event.target)) {
+                languageMenu.classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html> 

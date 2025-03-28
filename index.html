@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Alexander Efremov | AI Education Resources</title>
     <meta name="description" content="Educational materials about artificial intelligence and machine learning by Alexander Efremov">
+    <meta http-equiv="refresh" content="0;url=en/">
+    <link rel="alternate" hreflang="en" href="https://a1exe0v.github.io/ai-edu/en/" />
+    <link rel="alternate" hreflang="ru" href="https://a1exe0v.github.io/ai-edu/ru/" />
+    <link rel="alternate" hreflang="es" href="https://a1exe0v.github.io/ai-edu/es/" />
     
     <!-- Tailwind CSS via CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -39,6 +43,26 @@
         } else {
             document.documentElement.classList.remove('dark');
         }
+        
+        function detectLanguage() {
+            const supportedLanguages = ['en', 'ru', 'es'];
+            
+            // Try to detect from browser language
+            let browserLang = navigator.language || navigator.userLanguage;
+            browserLang = browserLang.split('-')[0].toLowerCase();
+            
+            // Check if browser language is supported
+            if (supportedLanguages.includes(browserLang)) {
+                return browserLang;
+            }
+            
+            // Default to English
+            return 'en';
+        }
+        
+        // Redirect to the appropriate language version
+        const lang = detectLanguage();
+        window.location.replace(`/${lang}/`);
     </script>
 </head>
 <body class="bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100 min-h-screen flex flex-col transition-colors duration-200">
@@ -220,7 +244,7 @@
                     <a href="#contact" class="text-gray-600 dark:text-gray-400 hover:text-primary-light dark:hover:text-primary-light transition">Contact</a>
                 </div>
             </div>
-        </div>
+    </div>
     </footer>
     
     <!-- Theme Switcher Script -->
