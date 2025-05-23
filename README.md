@@ -22,8 +22,6 @@ Visit the website at: [https://sabbah13.github.io/ai-edu/](https://sabbah13.gith
 ## 👤 Author
 
 **Alexander Efremov**
-- Email: [ae@aspirity.com](mailto:ae@aspirity.com)
-- Telegram: [@sabbah13](https://t.me/sabbah13)
 - Company: [Aspirity](https://aspirity.com/)
 
 ## 📄 License
