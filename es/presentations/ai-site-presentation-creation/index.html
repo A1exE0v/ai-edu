@@ -1,0 +1,657 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8">
+    <title>Creación de Sitios Web y Presentaciones con IA</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <!-- CSS de Reveal.js -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.4.0/reveal.min.css">
+    <!-- Tema oscuro: night -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.4.0/theme/night.min.css" id="theme">
+    <!-- Estilo de resaltado de código (Monokai) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/monokai.min.css">
+
+    <!-- Fuente Open Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+
+    <style>
+        body,
+        .reveal {
+            font-family: 'Open Sans', sans-serif;
+            color: #FFF;
+        }
+
+        .reveal .slides section {
+            font-size: 0.85em;
+        }
+
+        /* Elementos interactivos */
+        .interactive {
+            cursor: pointer;
+            color: #3BE8B0;
+        }
+
+        .hidden-content {
+            display: none;
+            margin-top: 10px;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 4px;
+        }
+
+        .diagram-box {
+            border: 2px solid #3BE8B0;
+            padding: 1em;
+            border-radius: 6px;
+            margin-top: 1em;
+            text-align: center;
+        }
+
+        /* Título en la primera diapositiva */
+        .animated-title {
+            font-size: 2em;
+            animation: slideInTitle 1s ease forwards;
+        }
+
+        @keyframes slideInTitle {
+            0% {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+
+            100% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Bloques Emoji */
+        .emoji-block {
+            font-size: 80px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        /* Estilos para tokens */
+        .token {
+            display: inline-block;
+            padding: 3px 5px;
+            margin: 2px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 0.9em;
+            color: #fff;
+        }
+
+        /* Colores para cada uno de los 11 tokens */
+        .tcolor0 {
+            background: #cc6666;
+        }
+
+        .tcolor1 {
+            background: #de935f;
+        }
+
+        .tcolor2 {
+            background: #f0c674;
+        }
+
+        .tcolor3 {
+            background: #b5bd68;
+        }
+
+        .tcolor4 {
+            background: #8abeb7;
+        }
+
+        .tcolor5 {
+            background: #81a2be;
+        }
+
+        .tcolor6 {
+            background: #b294bb;
+        }
+
+        .tcolor7 {
+            background: #c5c8c6;
+            color: #000;
+        }
+
+        /* Fondo claro, texto oscuro */
+        .tcolor8 {
+            background: #a3685a;
+        }
+
+        .tcolor9 {
+            background: #5f819d;
+        }
+
+        .tcolor10 {
+            background: #85678f;
+        }
+
+        /* Estilos para la cita de Satya Nadella */
+        .quote {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-style: italic;
+            margin-top: 20px;
+        }
+
+        .quote img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+        }
+
+        .comparison {
+            background: rgba(59, 232, 176, 0.15);
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+
+        /* Estilos para código */
+        pre code {
+            font-size: 0.75em;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* === NUEVOS ESTILOS PARA CORREGIR PROBLEMAS DE DISEÑO === */
+        /* Empujar hacia abajo el contenido de las diapositivas verticales para evitar la superposición con el H2 padre y su contenido */
+        .reveal .slides > section > section {
+             margin-top: 150px; /* Aumentado desde 150px. */
+        }
+
+        /* Ajustar H2 de las diapositivas horizontales si es necesario */
+        .reveal .slides section > h2 {
+            font-size: 1.9em; /* Ligeramente más grande para los títulos principales de las secciones horizontales */
+            margin-bottom: 20px;
+        }
+
+        /* Ajustar H3 de las diapositivas verticales */
+        .reveal .slides section section > h3 {
+            font-size: 1.5em; /* Títulos para las diapositivas verticales */
+            margin-bottom: 15px;
+        }
+
+        /* Estilo general de lista para una mejor legibilidad y para evitar el desbordamiento */
+        .reveal .slides ul,
+        .reveal .slides ol {
+            font-size: 0.85em; /* Relativo al tamaño de fuente de la sección (0.85em * 0.85em de la raíz) */
+            line-height: 1.1; /* Reducido desde 1.4 */
+        }
+        .reveal .slides ul ul,
+        .reveal .slides ol ol {
+            font-size: 1em; /* Mantener el mismo tamaño relativo de las listas anidadas que los elementos de la lista padre */
+            margin-top: 0.1em; /* Reducido desde 0.3em */
+            margin-bottom: 0.1em; /* Reducido desde 0.3em */
+        }
+         .reveal .slides li {
+            margin-bottom: 0.1em; /* Reducido desde 0.4em - Añadir un poco de espacio entre los elementos de la lista */
+        }
+
+        /* Estilo para logotipos en línea (si no se usan estilos en línea para la altura) */
+        .reveal .slides li img[alt*="Logo"],
+        .reveal .slides p img[alt*="Logo"] {
+            max-height: 28px; /* Altura de logotipo consistente en el flujo de texto */
+            height: auto;
+            vertical-align: text-bottom; /* Ajustado para una mejor alineación del texto */
+            margin-right: 6px;
+            /* margin-bottom: -3px; Eliminado para reevaluación */
+        }
+        
+        /* === CSS para Carrusel de Imágenes Estrecho === */
+        .narrow-carousel-container {
+            width: 100%; /* Toma el ancho completo de su padre */
+            overflow-x: auto; /* Permite el desplazamiento horizontal */
+            margin-top: 0px; 
+            margin-bottom: 0px;
+            padding-bottom: 0px; /* Espacio para la barra de desplazamiento si aparece */
+            border-radius: 4px;
+            /* background: rgba(255,255,255,0.03); Opcional: para ver los límites */
+        }
+        .narrow-carousel {
+            display: flex; /* Alinea las imágenes en una fila */
+            flex-direction: row;
+            gap: 12px; /* Espacio entre imágenes */
+            padding: 5px 2px; /* Algo de relleno dentro del área de desplazamiento */
+        }
+        .narrow-carousel img {
+            height: 120px; /* Define el aspecto "estrecho" */
+            width: auto; /* Mantiene la relación de aspecto */
+            border-radius: 5px;
+            border: 1px solid #444;
+            flex-shrink: 0; /* Evita que las imágenes se encojan para ajustarse */
+        }
+        /* === FIN DE NUEVOS ESTILOS === */
+    </style>
+</head>
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <!-- Diapositiva 1: Diapositiva de Título -->
+            <section data-transition="slide">
+                <h2 class="animated-title">Creación de Sitios Web y Presentaciones con IA</h2>
+                <h3>Alexander Efremov, Experto en IA</h3>
+                <p>Empresa Aspirity<br>
+                    Email: <a href="mailto:ae@aspirity.com" style="color:#3BE8B0;">ae@aspirity.com</a> | Telegram: <a
+                        href="https://t.me/sabbah13" target="_blank" style="color:#3BE8B0;">@sabbah13</a></p>
+                <div class="emoji-block">💻✨</div>
+            </section>
+
+            <!-- Bloque 0: Calentamiento -->
+            <section data-transition="slide">
+                <h2>¿La Magia de un Simple Prompt?</h2>
+                <!-- Diapositiva Vertical 1: Introducción -->
+                <section data-transition="slide">
+                    <h3>Una Simple Petición a la IA</h3>
+                    <p>Expectativas vs. Realidad al crear un sitio web con un único y simple prompt de IA.</p>
+                    <div class="emoji-block">✨➡️❓</div>
+                </section>
+                <!-- Diapositiva Vertical 2: Expectativa -->
+                <section data-transition="slide">
+                    <h3>Expectativa: ¡Una Obra Maestra!</h3>
+                    <img src="assets/bakery-good.png" alt="Sitio web genial esperado" style="width: 450px; border: 1px solid #ccc; margin-top: 20px;">
+                    <p style="font-size: 0.8em; margin-top: 10px;">"¡Hazme un sitio web bonito para una cafetería!"</p>
+                </section>
+                <!-- Diapositiva Vertical 3: Realidad -->
+                <section data-transition="slide">
+                    <h3>Realidad (A Menudo): Esqueleto Básico</h3>
+                    <img src="assets/bakery-bad.png" alt="Sitio web básico real" style="width: 450px; border: 1px solid #ccc; margin-top: 20px;">
+                    <p style="font-size: 0.8em; margin-top: 10px;">HTML muy simple, sin estilos ni contenido.</p>
+                </section>
+                <!-- Diapositiva Vertical 4: ¿Cuál es el problema? -->
+                <section data-transition="slide">
+                    <h3>¿Qué Salió Mal?</h3>
+                    <p class="fragment" style="margin-top: 30px;">¿Por qué sucede esto y cómo podemos solucionarlo? ¡Vamos a descubrirlo!</p>
+                    <div class="emoji-block fragment">🧐</div>
+                </section>
+            </section>
+
+            <!-- Bloque 1: Por qué el resultado es "no muy bueno" -->
+            <section data-transition="slide">
+                <h2>¿Por Qué el Resultado es "Decepcionante"?</h2>
+                <ul>
+                    <li><strong>Falta de activos de calidad:</strong> La IA no siempre encuentra o genera imágenes, videos o textos adecuados.</li>
+                    <li><strong>Sin estilos ni estructura bien pensados:</strong> El resultado básico de la IA a menudo carece de diseño y navegación fácil de usar.</li>
+                    <li><strong>El sitio no está publicado:</strong> El código generado necesita alojarse en algún lugar para ser accesible en línea.</li>
+                    <li><strong>Falta de singularidad y marca:</strong> Las soluciones genéricas no reflejan la individualidad del proyecto.</li>
+                </ul>
+                <div class="emoji-block">🤔</div>
+            </section>
+
+            <!-- Bloque 2: Activos: Dónde obtenerlos y cómo generarlos -->
+            <section data-transition="slide">
+                <h2>Activos: ¿Dónde Obtener y Cómo Crear?</h2>
+                <!-- Diapositiva Vertical 1: Bibliotecas -->
+                <section data-transition="slide">
+                    <h3>Activos listos para usar: Bancos de Fotos y Videos</h3>
+                    <p style="margin-top: 10px; margin-bottom: 20px;">El contenido de calidad es la base de cualquier sitio web o presentación.</p>
+                    <div style="display: flex; justify-content: space-around; align-items: flex-start; text-align: center;">
+                        <div style="flex:1;">
+                            <a href="https://pexels.com" target="_blank"><img src="https://img.logo.dev/pexels.com?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Logo de Pexels" style="height: 50px;"></a>
+                            <p style="font-size:0.9em;"><a href="https://pexels.com" target="_blank" style="color:#3BE8B0;">Pexels</a> – fotos y videos de stock gratuitos.</p>
+                        </div>
+                        <div style="flex:1;">
+                            <a href="https://unsplash.com" target="_blank"><img src="https://img.logo.dev/unsplash.com?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Logo de Unsplash" style="height: 50px;"></a>
+                            <p style="font-size:0.9em;"><a href="https://unsplash.com" target="_blank" style="color:#3BE8B0;">Unsplash</a> – una gran colección de fotos gratuitas de alta resolución.</p>
+                        </div>
+                    </div>
+
+                    <div class="narrow-carousel-container">
+                        <div class="narrow-carousel">
+                            <img src="https://picsum.photos/280/160?random=1" alt="Ejemplo de Pexels 1">
+                            <img src="https://picsum.photos/240/160?random=2" alt="Ejemplo de Pexels 2">
+                            <img src="https://picsum.photos/300/160?random=3" alt="Ejemplo de Pexels 3">
+                            <img src="https://picsum.photos/260/160?random=4" alt="Ejemplo de Pexels 4">
+                            <img src="https://picsum.photos/270/160?random=5" alt="Ejemplo de Pexels 5">
+                            <img src="https://picsum.photos/280/160?random=6" alt="Ejemplo de Pexels 1">
+                            <img src="https://picsum.photos/240/160?random=7" alt="Ejemplo de Pexels 2">
+                            <img src="https://picsum.photos/300/160?random=8" alt="Ejemplo de Pexels 3">
+                            <img src="https://picsum.photos/260/160?random=9" alt="Ejemplo de Pexels 4">
+                            <img src="https://picsum.photos/270/160?random=10" alt="Ejemplo de Pexels 5">
+
+                        </div>
+                    </div>
+                    
+                </section>
+                <!-- Diapositiva Vertical 2: Generación de Imágenes -->
+                <section data-transition="slide">
+                    <h3>Generación de Imágenes con IA</h3>
+                    <p>Crea imágenes únicas a partir de descripciones de texto.</p>
+                    <ul>
+                        <li><img src="https://img.logo.dev/openai.com?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Logo de ChatGPT" style="height: 30px; vertical-align: middle;"> <a href="https://openai.com/chatgpt/" target="_blank" style="color:#3BE8B0;">ChatGPT 4o</a></li>
+                        <li><img src="https://img.logo.dev/midjourney.com?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Logo de Midjourney" style="height: 30px; vertical-align: middle;"> <a href="https://www.midjourney.com/" target="_blank" style="color:#3BE8B0;">Midjourney</a></li>
+                        <li><img src="https://img.logo.dev/stability.ai?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Logo de Stable Diffusion" style="height: 30px; vertical-align: middle;"> <a href="https://stablediffusion.com/" target="_blank" style="color:#3BE8B0;">Stable Diffusion</a></li>
+                        <li><img src="https://img.logo.dev/google.com?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Logo de Google Imagen" style="height: 30px; vertical-align: middle;"> Google Imagen 4</li>
+                    </ul>
+                    <img src="assets/sticker.webp" alt="Ejemplo de imagen generada por IA" style="width: 200px; margin-top:10px;">
+                </section>
+                <!-- Diapositiva Vertical 3: Generación de Video -->
+                <section data-transition="slide">
+                    <h3>Creación de Videos con IA</h3>
+                    <p>Desde clips cortos hasta animaciones de texto.</p>
+                    <ul>
+                        <li><img src="https://img.logo.dev/runwayml.com?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Logo de RunwayML" style="height: 30px; vertical-align: middle;"> <a href="https://runwayml.com/" target="_blank" style="color:#3BE8B0;">Runway (Gen-2, Gen-3)</a></li>
+                        <li><img src="https://img.logo.dev/heygen.com?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Logo de HeyGen" style="height: 30px; vertical-align: middle;"> <a href="https://www.heygen.com/" target="_blank" style="color:#3BE8B0;">HeyGen</a> (para videos con avatares)</li>
+                        <li><img src="https://img.logo.dev/google.com?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Logo de Google Veo" style="height: 30px; vertical-align: middle;"> <a href="https://blog.google/technology/ai/google-veo-video-generation/" target="_blank" style="color:#3BE8B0;">Google Veo 3</a></li>
+                        <li><img src="https://img.logo.dev/openai.com?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Logo de OpenAI Sora" style="height: 30px; vertical-align: middle;"> OpenAI Sora</li>
+                    </ul>
+                </section>
+                <!-- Diapositiva Vertical 4: Generación de Audio -->
+                <section data-transition="slide">
+                    <h3>Generación de Audio y Voz</h3>
+                    <p>Voz en off, música y efectos de sonido.</p>
+                    <ul>
+                        <li><img src="https://img.logo.dev/elevenlabs.io?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Logo de ElevenLabs" style="height: 30px; vertical-align: middle;"> <a href="https://elevenlabs.io/" target="_blank" style="color:#3BE8B0;">ElevenLabs</a> (síntesis de voz realista)</li>
+                        <li><img src="https://img.logo.dev/suno.ai?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Logo de Suno AI" style="height: 30px; vertical-align: middle;"> <a href="https://suno.ai/" target="_blank" style="color:#3BE8B0;">Suno AI</a> (generación de música)</li>
+                        <li><img src="https://img.logo.dev/udio.com?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Logo de Udio" style="height: 30px; vertical-align: middle;"> <a href="https://www.udio.com/" target="_blank" style="color:#3BE8B0;">Udio</a> (generación de música)</li>
+                        <li><img src="https://img.logo.dev/riffusion.com?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Logo de Riffusion" style="height: 30px; vertical-align: middle;"> <a href="https://www.riffusion.com/" target="_blank" style="color:#3BE8B0;">Riffusion</a> (generación de música)</li>                         
+                    </ul>
+                </section>
+            </section>
+
+            <!-- Bloque 3: Scaffolding, frameworks y generadores de sitios estáticos -->
+            <section data-transition="slide">
+                <h2>Frameworks y Generadores: Estructura y Estilo</h2>
+                <p>Herramientas para crear una estructura y apariencia modernas.</p>
+                <!-- Diapositiva Vertical 1: Frameworks de UI -->
+                <section data-transition="slide">
+                    <h3>Frameworks de UI: Diseño Listo para Usar</h3>
+                    <p>Conjuntos de componentes y estilos predefinidos.</p>
+                    <ul>
+                        <li><img src="https://img.logo.dev/getbootstrap.com?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Logo de Bootstrap" style="height: 30px; vertical-align: middle;"> <a href="https://getbootstrap.com/" target="_blank" style="color:#3BE8B0;">Bootstrap</a> (172k★)</li>
+                        <li><img src="https://img.logo.dev/tailwindcss.com?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Logo de Tailwind CSS" style="height: 30px; vertical-align: middle;"> <a href="https://tailwindcss.com/" target="_blank" style="color:#3BE8B0;">Tailwind CSS</a> (87k★)</li>
+                        <li><img src="https://img.logo.dev/ui.shadcn.com?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Logo de shadcn/ui" style="height: 30px; vertical-align: middle;"> <a href="https://ui.shadcn.com/" target="_blank" style="color:#3BE8B0;">shadcn/ui</a> (85k★)</li>
+                        <li><img src="https://img.logo.dev/bulma.io?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Logo de Bulma" style="height: 30px; vertical-align: middle;"> <a href="https://bulma.io/" target="_blank" style="color:#3BE8B0;">Bulma</a> (50k★)</li>
+                    </ul>
+                </section>
+                <!-- Diapositiva Vertical 2: Meta-frameworks -->
+                <section data-transition="slide">
+                    <h3>Meta-frameworks: Inicio Rápido</h3>
+                    <p>Soluciones integrales para aplicaciones web modernas.</p>
+                    <ul>
+                        <li><img src="https://img.logo.dev/nextjs.org?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Logo de Next.js" style="height: 30px; vertical-align: middle;"> <a href="https://nextjs.org/" target="_blank" style="color:#3BE8B0;">Next.js</a> (starters)</li>
+                        <li><img src="https://img.logo.dev/astro.build?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Logo de Astro" style="height: 30px; vertical-align: middle;"> <a href="https://astro.build/" target="_blank" style="color:#3BE8B0;">Astro</a> (temas)</li>
+                        <li><img src="https://img.logo.dev/gatsbyjs.com?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Logo de Gatsby" style="height: 30px; vertical-align: middle;"> <a href="https://www.gatsbyjs.com/" target="_blank" style="color:#3BE8B0;">Gatsby</a> (56k★)</li>
+                    </ul>
+                </section>
+                <!-- Diapositiva Vertical 3: Generadores de Sitios Estáticos -->
+                <section data-transition="slide">
+                    <h3>Generadores de Sitios Estáticos: Velocidad y Simplicidad</h3>
+                    <p>Creación de sitios web rápidos a partir de plantillas y datos.</p>
+                    <ul>
+                        <li><img src="https://img.logo.dev/gohugo.io?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Logo de Hugo" style="height: 30px; vertical-align: middle;"> <a href="https://gohugo.io/" target="_blank" style="color:#3BE8B0;">Hugo</a></li>
+                        <li><img src="https://img.logo.dev/jekyllrb.com?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Logo de Jekyll" style="height: 30px; vertical-align: middle;"> <a href="https://jekyllrb.com/" target="_blank" style="color:#3BE8B0;">Jekyll</a></li>
+                        <li><img src="https://img.logo.dev/astro.build?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Logo de Astro" style="height: 30px; vertical-align: middle;"> <a href="https://astro.build/" target="_blank" style="color:#3BE8B0;">Astro</a> (también como SSG)</li>
+                    </ul>
+                </section>
+                 <!-- Diapositiva Vertical 4: CMS -->
+                <section data-transition="slide">
+                    <h3>CMS: Gestión de Contenido Conveniente</h3>
+                    <p>La IA genera el sitio y tú lo editas fácilmente a través de un CMS.</p>
+                    <ul>
+                        <li><strong>CMS Headless:</strong> <a href="https://www.strapi.io" target="_blank" style="color:#3BE8B0;">Strapi</a>, <a href="https://www.sanity.io" target="_blank" style="color:#3BE8B0;">Sanity.io</a> - La IA ayuda con el contenido, el CMS proporciona la API.</li>
+                        <li><strong>CMS Tradicionales con plugins de IA:</strong> WordPress + Plugins de IA.</li>
+                        <li>Muchos constructores de sitios web con IA (ej. <a href="https://durable.co" target="_blank" style="color:#3BE8B0;">Durable.co</a>) ofrecen editores integrados.</li>
+                    </ul>
+                     <p style="font-size: 0.8em; margin-top: 15px;">La IA puede generar la estructura y el contenido inicial, que luego se puede importar y gestionar fácilmente a través de un CMS.</p>
+                </section>
+            </section>
+
+            <!-- Bloque 4: Publicación sin dolor -->
+            <section data-transition="slide">
+                <h2>Mostrando al Mundo: Publicación (Despliegue)</h2>
+                <p>¡Poner tu sitio en línea es fácil!</p>
+                <!-- Diapositiva Vertical 1: Plataformas -->
+                <section data-transition="slide">
+                    <h3>Plataformas de Despliegue</h3>
+                    <p>Servicios que automatizan el proceso de publicación.</p>
+                    <ul>
+                        <li><img src="https://img.logo.dev/vercel.com?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Logo de Vercel" style="height: 30px; vertical-align: middle;"> <a href="https://vercel.com/" target="_blank" style="color:#3BE8B0;">Vercel</a></li>
+                        <li><img src="https://img.logo.dev/netlify.com?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Logo de Netlify" style="height: 30px; vertical-align: middle;"> <a href="https://www.netlify.com/" target="_blank" style="color:#3BE8B0;">Netlify</a></li>
+                        <li><img src="https://img.logo.dev/github.com?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Logo de GitHub Pages" style="height: 30px; vertical-align: middle;"> <a href="https://pages.github.com/" target="_blank" style="color:#3BE8B0;">GitHub Pages</a></li>
+                        <li><img src="https://img.logo.dev/cloudflare.com?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Logo de Cloudflare Pages" style="height: 30px; vertical-align: middle;"> <a href="https://pages.cloudflare.com/" target="_blank" style="color:#3BE8B0;">Cloudflare Pages</a></li>
+                    </ul>
+                    <p style="font-size: 0.8em;">Muchos ofrecen planes gratuitos y dominios temporales automáticos.</p>
+                </section>
+                <!-- Diapositiva Vertical 2: Dominios -->
+                <section data-transition="slide">
+                    <h3>Tu Propia Dirección: Dominios</h3>
+                    <p>Cómo comprar y vincular un nombre único para tu sitio web.</p>
+                    <p><strong>Registradores de dominios populares:</strong></p>
+                    <ul>
+                        <li><img src="https://img.logo.dev/namecheap.com?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Logo de Namecheap" style="height: 25px; vertical-align: middle;"> Namecheap</li>
+                        <li><img src="https://img.logo.dev/godaddy.com?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Logo de GoDaddy" style="height: 25px; vertical-align: middle;"> GoDaddy</li>
+                        <li><img src="https://img.logo.dev/reg.ru?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Logo de REG.RU" style="height: 25px; vertical-align: middle;"> REG.RU (para dominios .RU/.РФ)</li>
+                    </ul>
+                    <p style="font-size: 0.8em;">El proceso de vinculación generalmente implica cambiar los registros DNS en el sitio del registrador para que apunten a tu plataforma de hosting (Vercel, Netlify, etc.).</p>
+                </section>
+            </section>
+
+            <!-- Bloque 5: Herramientas de Desarrollador de IA -->
+            <section data-transition="slide">
+                <h2>Herramientas de Desarrollador de IA</h2>
+                <p>Desde simples chatbots hasta IDEs especializados.</p>
+                <!-- Diapositiva Vertical 1: Asistentes de IA Simples -->
+                <section data-transition="slide">
+                    <h3>Asistentes en el Navegador</h3>
+                    <p>Generación rápida de código, explicaciones, refactorización.</p>
+                    <ul>
+                        <li><img src="https://img.logo.dev/openai.com?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Logo de ChatGPT" style="height: 30px; vertical-align: middle;"> <a href="https://chat.openai.com/" target="_blank" style="color:#3BE8B0;">ChatGPT</a></li>
+                        <li><img src="https://img.logo.dev/anthropic.com?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Logo de Claude AI" style="height: 30px; vertical-align: middle;"> <a href="https://claude.ai/" target="_blank" style="color:#3BE8B0;">Claude AI</a></li>
+                        <li><img src="https://img.logo.dev/gemini.google.com?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Logo de Google Gemini" style="height: 30px; vertical-align: middle;"> <a href="https://gemini.google.com/" target="_blank" style="color:#3BE8B0;">Google Gemini</a></li>
+                        <li><img src="https://img.logo.dev/deepseek.com?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Logo de DeepSeek" style="height: 30px; vertical-align: middle;"> <a href="https://www.deepseek.com/" target="_blank" style="color:#3BE8B0;">DeepSeek</a></li>
+                    </ul>
+                </section>
+                <!-- Diapositiva Vertical 2: Agentes de IA para Desarrollo -->
+                <section data-transition="slide">
+                    <h3>Agentes de IA: Desarrollo Autónomo</h3>
+                    <p>Herramientas que pueden crear aplicaciones completas a partir de descripciones.</p>
+                    <ul>
+                        <li><img src="https://img.logo.dev/replit.com?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Logo de Replit" style="height: 30px; vertical-align: middle;"> <a href="https://replit.com/ghostwriter" target="_blank" style="color:#3BE8B0;">Replit (AI / Ghostwriter)</a></li>
+                        <li><img src="https://img.logo.dev/v0.dev?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Logo de v0.dev" style="height: 30px; vertical-align: middle;"> <a href="https://v0.dev/" target="_blank" style="color:#3BE8B0;">v0.dev (por Vercel)</a> - generación de UI</li>
+                        <li><img src="https://img.logo.dev/lovable.dev?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Logo de Lovable.dev" style="height: 30px; vertical-align: middle;"> <a href="https://lovable.dev/" target="_blank" style="color:#3BE8B0;">Lovable.dev</a></li>
+                        <li><img src="https://img.logo.dev/bolt.new?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Logo de Bolt.new" style="height: 30px; vertical-align: middle;"> <a href="https://bolt.new/" target="_blank" style="color:#3BE8B0;">Bolt.new</a></li>
+                    </ul>
+                </section>
+                <!-- Diapositiva Vertical 3: Herramientas de IA Avanzadas -->
+                <section data-transition="slide">
+                    <h3>Herramientas Pro: AI-IDEs y Plugins</h3>
+                    <p>Integración profunda de IA en el proceso de desarrollo.</p>
+                    <ul>
+                        <li><img src="https://img.logo.dev/cursor.sh?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Logo de Cursor" style="height: 30px; vertical-align: middle;"> <a href="https://cursor.sh/" target="_blank" style="color:#3BE8B0;">Cursor</a></li>
+                        <li><img src="https://img.logo.dev/github.com?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Logo de GitHub Copilot" style="height: 30px; vertical-align: middle;"> <a href="https://copilot.github.com/" target="_blank" style="color:#3BE8B0;">GitHub Copilot</a></li>
+                        <li><img src="https://img.logo.dev/codeium.com?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Logo de Codeium" style="height: 30px; vertical-align: middle;"> <a href="https://codeium.com/" target="_blank" style="color:#3BE8B0;">Windsurf</a></li>
+                        <li><img src="https://img.logo.dev/aws.amazon.com?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Logo de AWS CodeWhisperer" style="height: 30px; vertical-align: middle;"> <a href="https://aws.amazon.com/codewhisperer/" target="_blank" style="color:#3BE8B0;">AWS CodeWhisperer</a></li>
+                        <li><img src="https://img.logo.dev/openai.com?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Logo de OpenAI Codex" style="height: 30px; vertical-align: middle;"> <a href="https://openai.com/blog/openai-codex/" target="_blank" style="color:#3BE8B0;">OpenAI Codex</a></li>
+                        <li><img src="https://img.logo.dev/anthropic.com?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Logo de Claude AI" style="height: 30px; vertical-align: middle;"> <a href="https://www.anthropic.com/claude-code" target="_blank" style="color:#3BE8B0;">Claude Code</a></li>
+                    </ul>
+                </section>
+            </section>
+
+            <!-- Bloque 6: Presentaciones como Sitios Web -->
+            <section data-transition="slide">
+                <h2>Presentaciones = Sitios Web: Reveal.js</h2>
+                <p>¡Esta presentación está hecha con Reveal.js!</p>
+                <!-- Diapositiva Vertical 1: ¿Qué es Reveal.js? -->
+                <section data-transition="slide">
+                    <h3>Reveal.js: Presentaciones HTML Interactivas</h3>
+                    <img src="https://img.logo.dev/revealjs.com?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Logo de Reveal.js" style="height: 80px;">
+                    <p><a href="https://revealjs.com/" target="_blank" style="color:#3BE8B0;">Reveal.js</a> (69k★ en GitHub) es un framework para crear presentaciones interactivas y atractivas directamente en el navegador usando HTML, CSS y JavaScript.</p>
+                </section>
+                <!-- Diapositiva Vertical 2: Ventajas -->
+                <section data-transition="slide">
+                    <h3>¿Por Qué Reveal.js?</h3>
+                    <ul>
+                        <li><strong>Interactividad:</strong> Incrusta contenido web, animaciones, diagramas interactivos.</li>
+                        <li><strong>Flexibilidad:</strong> Diapositivas horizontales y verticales, temas, plugins.</li>
+                        <li><strong>Exportación a PDF:</strong> Comparte o imprime fácilmente.</li>
+                        <li><strong>Sitio Web:</strong> Se publica como un sitio web normal, accesible mediante un enlace.</li>
+                        <li><strong>Control del Código:</strong> Control total sobre la estructura y el estilo.</li>
+                        <li><strong>Soporte Markdown:</strong> Escribe contenido en Markdown.</li>
+                    </ul>
+                </section>
+                <!-- Diapositiva Vertical 3: Editor Slides.com -->
+                <section data-transition="slide">
+                    <h3>Editor en Línea: Slides.com</h3>
+                    <a href="https://slides.com" target="_blank"><img src="https://img.logo.dev/slides.com?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Logo de Slides.com" style="height: 70px;"></a>
+                    <p><a href="https://slides.com" target="_blank" style="color:#3BE8B0;">Slides.com</a> es un editor en línea comercial construido sobre Reveal.js. Permite crear y editar presentaciones en una interfaz visual fácil de usar, sin necesidad de editar HTML directamente.</p>
+                </section>
+            </section>
+
+            <!-- Bloque 7: Diseño Avanzado -->
+            <section data-transition="slide">
+                <h2>Diseño Avanzado con IA</h2>
+                <p>Integrando IA en herramientas de diseño profesional.</p>
+                <!-- Diapositiva Vertical 1: Figma + IA -->
+                <section data-transition="slide">
+                    <h3>Figma + IA = Magia del Diseño</h3>
+                    <img src="https://img.logo.dev/figma.com?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Logo de Figma" style="height: 70px;">
+                    <p>La popular herramienta de diseño UI/UX <a href="https://www.figma.com/" target="_blank" style="color:#3BE8B0;">Figma</a> se está integrando activamente con la IA:</p>
+                    <ul>
+                        <li><strong>Plugins de IA:</strong>
+                            <ul>
+                                <li><a href="https://galileo.ai/" target="_blank" style="color:#3BE8B0;">Galileo AI</a>: generación de UI a partir de descripciones de texto.</li>
+                                <li>FigGPT (y similares): integración de ChatGPT para generación de textos/ideas.</li>
+                                <li>Plugins para automatizar tareas rutinarias.</li>
+                            </ul>
+                        </li>
+                        <li><strong>Asistentes de IA (ej. Cursor):</strong> Pueden ayudar con Figma a través de API o plugins para generar/modificar diseños basados en instrucciones.</li>
+                    </ul>
+                </section>
+                <!-- Diapositiva Vertical 2: Google Stitch -->
+                <section data-transition="slide">
+                    <h3>Google Stitch: UI desde un Prompt</h3>
+                     <img src="https://img.logo.dev/google.com?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Logo de Google Labs" style="height: 60px;">
+                    <p><strong>Google Stitch</strong> (anunciado en Google I/O, puede ser parte de Google Labs o Project IDX) – una herramienta experimental para generar maquetas de UI y código HTML/CSS listo a partir de prompts de texto o imágenes.</p>
+                    <ul>
+                        <li>Promete generación rápida de prototipos.</li>
+                        <li>Capacidad de exportar a Figma para mayor refinamiento.</li>
+                        <li>Muestra el futuro del diseño impulsado por IA.</li>
+                    </ul>
+                  </section>
+            </section>
+
+            <!-- Bloque 8: Lista de Acciones -->
+            <section data-transition="slide">
+                <h2>Tu Plan de Acción: Lista de Verificación</h2>
+                <ol>
+                    <li class="fragment"><strong>Elige un framework:</strong> Decide la base tecnológica para tu sitio (Bootstrap, Next.js, Astro, etc.).</li>
+                    <li class="fragment"><strong>Reúne/genera activos:</strong> Prepara textos, imágenes, videos (bancos de imágenes, generación por IA).</li>
+                    <li class="fragment"><strong>Crea y refina:</strong> Usa herramientas de IA (ChatGPT, Cursor, v0.dev) para generar y personalizar código y diseño.</li>
+                    <li class="fragment"><strong>Publica el sitio:</strong> Despliega tu proyecto en Vercel, Netlify u otra plataforma.</li>
+                    <li class="fragment"><strong>(Opcional) Vincula un dominio:</strong> Haz tu sitio accesible mediante una dirección única.</li>
+                    <li class="fragment"><strong>Recopila comentarios y mejora:</strong> Analiza y desarrolla tu proyecto.</li>
+                </ol>
+                <div class="emoji-block fragment">🚀</div>
+            </section>
+
+            <!-- Diapositiva: Enlaces y Recursos Útiles -->
+            <section data-transition="slide">
+                <h2>Enlaces y Recursos Útiles</h2>
+                 <div style="display: flex; font-size: 0.75em;">
+                    <div style="flex: 1;">
+                        <strong>Activos:</strong>
+                        <ul>
+                            <li><a href="https://pexels.com" target="_blank" style="color:#3BE8B0;">Pexels</a>, <a href="https://unsplash.com" target="_blank" style="color:#3BE8B0;">Unsplash</a></li>
+                            <li>Generación de Imágenes: <a href="https://openai.com/chatgpt/" target="_blank" style="color:#3BE8B0;">ChatGPT (DALL-E)</a>, <a href="https://www.midjourney.com/" target="_blank" style="color:#3BE8B0;">Midjourney</a></li>
+                            <li>Generación de Video: <a href="https://runwayml.com/" target="_blank" style="color:#3BE8B0;">Runway</a>, <a href="https://www.heygen.com/" target="_blank" style="color:#3BE8B0;">HeyGen</a></li>
+                            <li>Generación de Audio: <a href="https://elevenlabs.io/" target="_blank" style="color:#3BE8B0;">ElevenLabs</a>, <a href="https://suno.ai/" target="_blank" style="color:#3BE8B0;">Suno AI</a></li>
+                        </ul>
+                        <strong>Frameworks y Generadores:</strong>
+                        <ul>
+                            <li>UI: <a href="https://getbootstrap.com/" target="_blank" style="color:#3BE8B0;">Bootstrap</a>, <a href="https://tailwindcss.com/" target="_blank" style="color:#3BE8B0;">Tailwind CSS</a>, <a href="https://ui.shadcn.com/" target="_blank" style="color:#3BE8B0;">shadcn/ui</a></li>
+                            <li>Meta: <a href="https://nextjs.org/" target="_blank" style="color:#3BE8B0;">Next.js</a>, <a href="https://astro.build/" target="_blank" style="color:#3BE8B0;">Astro</a>, <a href="https://www.gatsbyjs.com/" target="_blank" style="color:#3BE8B0;">Gatsby</a></li>
+                            <li>SSG: <a href="https://gohugo.io/" target="_blank" style="color:#3BE8B0;">Hugo</a>, <a href="https://jekyllrb.com/" target="_blank" style="color:#3BE8B0;">Jekyll</a></li>
+                        </ul>
+                    </div>
+                    <div style="flex: 1;">
+                        <strong>Publicación (Despliegue):</strong>
+                        <ul>
+                            <li><a href="https://vercel.com/" target="_blank" style="color:#3BE8B0;">Vercel</a>, <a href="https://www.netlify.com/" target="_blank" style="color:#3BE8B0;">Netlify</a>, <a href="https://pages.github.com/" target="_blank" style="color:#3BE8B0;">GitHub Pages</a></li>
+                        </ul>
+                        <strong>Herramientas de Desarrollador de IA:</strong>
+                        <ul>
+                            <li>Basadas en Navegador: <a href="https://chat.openai.com/" target="_blank" style="color:#3BE8B0;">ChatGPT</a>, <a href="https://claude.ai/" target="_blank" style="color:#3BE8B0;">Claude AI</a>, <a href="https://gemini.google.com/" target="_blank" style="color:#3BE8B0;">Gemini</a></li>
+                            <li>Agentes: <a href="https://replit.com/ghostwriter" target="_blank" style="color:#3BE8B0;">Replit AI</a>, <a href="https://v0.dev/" target="_blank" style="color:#3BE8B0;">v0.dev</a>, <a href="https://lovable.dev/" target="_blank" style="color:#3BE8B0;">Lovable.dev</a></li>
+                            <li>AI-IDEs: <a href="https://cursor.sh/" target="_blank" style="color:#3BE8B0;">Cursor</a>, <a href="https://copilot.github.com/" target="_blank" style="color:#3BE8B0;">GitHub Copilot</a>, <a href="https://codeium.com/" target="_blank" style="color:#3BE8B0;">Codeium</a></li>
+                        </ul>
+                        <strong>Presentaciones y Diseño:</strong>
+                        <ul>
+                            <li><a href="https://revealjs.com/" target="_blank" style="color:#3BE8B0;">Reveal.js</a>, <a href="https://slides.com/" target="_blank" style="color:#3BE8B0;">Slides.com</a></li>
+                            <li><a href="https://www.figma.com/" target="_blank" style="color:#3BE8B0;">Figma</a> + Plugins de IA (<a href="https://galileo.ai/" target="_blank" style="color:#3BE8B0;">Galileo AI</a>)</li>
+                        </ul>
+                    </div>
+                </div>
+                <p style="font-size: 0.6em; text-align: center; margin-top: 30px;">Logotipos proporcionados por <a href="https://logo.dev" target="_blank" style="color:#3BE8B0;">Logo.dev</a></p>
+            </section>
+
+            <!-- Diapositiva: Gracias y Contactos -->
+            <section data-transition="slide">
+                <h2>¡Gracias por su Atención!</h2>
+                <p>
+                    Alexander Efremov<br>
+                    Experto en IA, <a href="https://aspirity.com/" target="_blank" style="color:#3BE8B0;">Empresa Aspirity</a>
+                </p>
+                <p>
+                    ✉️ <a href="mailto:ae@aspirity.com" style="color:#3BE8B0;">ae@aspirity.com</a> | Telegram:
+                    <a href="https://t.me/sabbah13" target="_blank" style="color:#3BE8B0;">@sabbah13</a>
+                </p>
+                <div style="text-align: center; margin: 30px 0;">
+                    <img src="https://media.licdn.com/dms/image/v2/D4D03AQHk6KmWOKJd1w/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1698778011147?e=1747267200&v=beta&t=XGyRlARt2AOWYpDegXJXcLvedZn4P_WdrjVvmnG74hk"
+                        alt="Alexander Efremov" style="max-width: 250px; border-radius: 50%;">
+                </div>
+                <div style="text-align: center; margin-top: 20px;">
+                    <a href="?print-pdf"
+                        style="display: inline-block; padding: 10px 20px; font-size: 1em; background: #3BE8B0; border-radius: 4px; color: #000; text-decoration: none; cursor: pointer;">
+                        Descargar PDF
+                    </a>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- Reveal.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.4.0/reveal.min.js"></script>
+    <!-- Plugin highlight.js para resaltado de código -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.4.0/plugin/highlight/highlight.min.js"></script>
+    <!-- Plugin markdown para data-markdown -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.4.0/plugin/markdown/markdown.min.js"></script>
+
+    <script>
+        Reveal.initialize({
+            hash: true,
+            slideNumber: true,
+            transition: 'slide',
+            backgroundTransition: 'slide',
+            width: 1200,
+            height: 700,
+            margin: 0.08,
+            minScale: 0.2,
+            maxScale: 1.3,
+            plugins: [RevealHighlight, RevealMarkdown]
+        });
+    </script>
+</body>
+
+</html>

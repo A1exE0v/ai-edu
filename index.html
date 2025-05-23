@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Alexander Efremov | AI Education Resources</title>
     <meta name="description" content="Educational materials about artificial intelligence and machine learning by Alexander Efremov">
-    <meta http-equiv="refresh" content="0;url=/ai-edu/en/">
+    <!-- The meta refresh tag will be removed as per user request to rely on JS/manual redirection -->
     <link rel="alternate" hreflang="en" href="https://a1exe0v.github.io/ai-edu/en/" />
     <link rel="alternate" hreflang="ru" href="https://a1exe0v.github.io/ai-edu/ru/" />
     <link rel="alternate" hreflang="es" href="https://a1exe0v.github.io/ai-edu/es/" />
@@ -19,31 +19,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <script>
-        // Tailwind Configuration
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    },
-                    colors: {
-                        primary: {
-                            light: '#3BE8B0',
-                            dark: '#2bbb8c',
-                        }
-                    }
-                }
-            }
-        }
-        
-        // Check for dark mode preference
-        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark');
-        } else {
-            document.documentElement.classList.remove('dark');
-        }
-        
         function detectLanguage() {
             const supportedLanguages = ['en', 'ru', 'es'];
             
@@ -62,202 +37,40 @@
         
         // Redirect to the appropriate language version
         const lang = detectLanguage();
-        window.location.replace(`/ai-edu/${lang}/`);
+        // Construct the new URL carefully, ensuring it's a full path from the root
+        // Assuming the script is in /ai-edu/index.html or similar root for the project
+        // and we want to go to /ai-edu/[lang]/
+        const currentPath = window.location.pathname;
+        // Ensure we are building the path correctly relative to the domain root,
+        // considering the GitHub Pages structure /ai-edu/
+        const basePath = "/ai-edu/"; // This should be the base path of your site on GitHub Pages
+        window.location.replace(basePath + lang + "/");
     </script>
+    <style>
+        body { font-family: sans-serif; margin: 20px; background-color: #f4f4f4; color: #333; text-align: center; }
+        .container { max-width: 600px; margin: 50px auto; padding: 20px; background-color: #fff; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        h1 { color: #555; }
+        p { font-size: 1.1em; line-height: 1.6; }
+        a { color: #007bff; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .lang-links { margin-top: 20px; }
+        .lang-links a { margin: 0 10px; padding: 10px 15px; background-color: #007bff; color: white; border-radius: 5px; display: inline-block; }
+        .lang-links a:hover { background-color: #0056b3; }
+    </style>
 </head>
-<body class="bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100 min-h-screen flex flex-col transition-colors duration-200">
-    <!-- Header -->
-    <header class="border-b border-gray-200 dark:border-gray-800">
-        <div class="container mx-auto px-4 py-6 flex justify-between items-center">
-            <a href="/" class="text-2xl font-bold text-primary-light dark:text-primary-light hover:opacity-90">Alexander Efremov</a>
-            
-            <div class="flex items-center space-x-6">
-                <nav class="hidden md:flex space-x-6">
-                    <a href="#about" class="font-medium hover:text-primary-light dark:hover:text-primary-light transition">About</a>
-                    <a href="#materials" class="font-medium hover:text-primary-light dark:hover:text-primary-light transition">Materials</a>
-                    <a href="#contact" class="font-medium hover:text-primary-light dark:hover:text-primary-light transition">Contact</a>
-                </nav>
-                
-                <!-- Dark/Light Theme Toggle -->
-                <button id="theme-toggle" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
-                    <!-- Sun icon (for dark mode) -->
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 hidden dark:block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-                    </svg>
-                    <!-- Moon icon (for light mode) -->
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 block dark:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-                    </svg>
-                </button>
-            </div>
+<body>
+    <div class="container">
+        <h1>Redirecting...</h1>
+        <p>We are attempting to redirect you to the version of the site in your preferred language.</p>
+        <p>If you are not redirected automatically, or wish to choose a different language, please use the links below:</p>
+        <div class="lang-links">
+            <a href="/ai-edu/en/">English</a>
+            <a href="/ai-edu/ru/">Русский (Russian)</a>
+            <a href="/ai-edu/es/">Español (Spanish)</a>
         </div>
-    </header>
-    
-    <!-- Hero Section -->
-    <section class="container mx-auto px-4 py-16 md:py-24">
-        <div class="max-w-4xl mx-auto text-center">
-            <h1 class="text-4xl md:text-5xl font-bold mb-6">AI Education Resources</h1>
-            <p class="text-xl md:text-2xl text-gray-600 dark:text-gray-400 mb-8">
-                Sharing knowledge about artificial intelligence and machine learning technologies
-            </p>
-            <div class="flex justify-center gap-4">
-                <a href="#materials" class="px-6 py-3 bg-primary-light hover:bg-primary-dark text-white font-medium rounded-lg transition shadow-lg hover:shadow-xl">
-                    Browse Materials
-                </a>
-                <a href="#contact" class="px-6 py-3 bg-white dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-700 font-medium rounded-lg hover:border-primary-light dark:hover:border-primary-light transition">
-                    Contact Me
-                </a>
-            </div>
-        </div>
-    </section>
-    
-    <!-- About Section -->
-    <section id="about" class="bg-white dark:bg-gray-800 py-16">
-        <div class="container mx-auto px-4">
-            <div class="max-w-4xl mx-auto">
-                <h2 class="text-3xl font-bold mb-6">About Me</h2>
-                <div class="flex flex-col md:flex-row gap-8 items-center">
-                    <div class="w-48 h-48 rounded-full overflow-hidden flex-shrink-0 mx-auto md:mx-0">
-                        <img src="https://avatars.githubusercontent.com/u/151593933?v=4" 
-                             alt="Alexander Efremov" 
-                             class="w-full h-full object-cover">
-                    </div>
-                    <div>
-                        <p class="text-lg mb-4">
-                            I'm Alexander Efremov, an AI expert at Aspirity company with extensive experience in artificial intelligence and machine learning technologies.
-                        </p>
-                        <p class="text-lg mb-4">
-                            My passion is making complex AI concepts accessible to everyone. This website is a collection of educational materials, presentations, and resources I've created to help others learn about the exciting world of AI.
-                        </p>
-                        <p class="text-lg">
-                            Whether you're just starting your AI journey or looking to deepen your expertise, I hope these resources will be valuable for your learning path.
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    
-    <!-- Materials Section -->
-    <section id="materials" class="py-16">
-        <div class="container mx-auto px-4">
-            <h2 class="text-3xl font-bold mb-10 text-center">Educational Materials</h2>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <!-- Presentation Item -->
-                <div class="bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition">
-                    <div class="bg-gradient-to-r from-blue-500 to-primary-light h-3"></div>
-                    <div class="p-6">
-                        <span class="inline-block px-3 py-1 text-sm font-medium bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full mb-4">Presentation</span>
-                        <h3 class="text-xl font-bold mb-2">
-                            <a href="presentations/llm-webinar-1/" class="hover:text-primary-light dark:hover:text-primary-light transition">
-                                How Large Language Models (LLM) Work
-                            </a>
-                        </h3>
-                        <p class="text-gray-600 dark:text-gray-400 mb-4">
-                            A comprehensive presentation about the architecture, functionality, and practical applications of Large Language Models.
-                        </p>
-                        <div class="flex justify-between items-center">
-                            <span class="text-sm text-gray-500 dark:text-gray-500">March 28, 2024</span>
-                            <a href="presentations/llm-webinar-1/" class="flex items-center text-primary-light hover:underline">
-                                View Presentation
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                                </svg>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Coming Soon Item -->
-                <div class="bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-lg border border-dashed border-gray-300 dark:border-gray-700">
-                    <div class="p-6">
-                        <span class="inline-block px-3 py-1 text-sm font-medium bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200 rounded-full mb-4">Coming Soon</span>
-                        <h3 class="text-xl font-bold mb-2 text-gray-500 dark:text-gray-400">
-                            Practical AI: Building Your First Chatbot
-                        </h3>
-                        <p class="text-gray-500 dark:text-gray-500 mb-4">
-                            Learn how to build, train and deploy your own AI-powered chatbot using open-source tools and frameworks.
-                        </p>
-                    </div>
-                </div>
-                
-                <!-- Coming Soon Item -->
-                <div class="bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-lg border border-dashed border-gray-300 dark:border-gray-700">
-                    <div class="p-6">
-                        <span class="inline-block px-3 py-1 text-sm font-medium bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200 rounded-full mb-4">Coming Soon</span>
-                        <h3 class="text-xl font-bold mb-2 text-gray-500 dark:text-gray-400">
-                            Introduction to Neural Networks
-                        </h3>
-                        <p class="text-gray-500 dark:text-gray-500 mb-4">
-                            An accessible introduction to neural networks, their structure, and how they form the foundation of modern AI systems.
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    
-    <!-- Contact Section -->
-    <section id="contact" class="bg-white dark:bg-gray-800 py-16">
-        <div class="container mx-auto px-4">
-            <div class="max-w-4xl mx-auto text-center">
-                <h2 class="text-3xl font-bold mb-6">Get In Touch</h2>
-                <p class="text-xl text-gray-600 dark:text-gray-400 mb-8">
-                    Have questions about AI or interested in collaboration? Feel free to reach out!
-                </p>
-                
-                <div class="flex flex-col md:flex-row gap-6 justify-center items-center">
-                    <a href="mailto:ae@aspirity.com" class="flex items-center px-6 py-3 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                        </svg>
-                        ae@aspirity.com
-                    </a>
-                    <a href="https://t.me/sabbah13" target="_blank" class="flex items-center px-6 py-3 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm4.519 8.295c-.14 1.476-.7 5.055-1.12 7.264-.158.853-.367 1.139-.6 1.17-.507.063-.893-.334-1.386-.655-.773-.5-1.207-.808-1.955-1.3-.867-.56-.305-1.07.19-1.68.13-.159 2.37-2.169 2.41-2.353.004-.02.005-.096-.037-.136s-.125-.008-.18.006c-.1.02-1.693 1.078-2.61 1.61-.245.135-.469.2-.66.204-.218.002-.638-.128-.95-.234-.384-.132-.69-.2-.663-.424.014-.12.186-.242.512-.365 1.996-.753 3.33-1.248 4.008-1.488.89-.316 2.087-.702 2.318-.615.082.032.186.135.155.264z"/>
-                        </svg>
-                        @sabbah13
-                    </a>
-                    <a href="https://aspirity.com/" target="_blank" class="flex items-center px-6 py-3 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
-                        </svg>
-                        Aspirity
-                    </a>
-                </div>
-            </div>
-        </div>
-    </section>
-    
-    <!-- Footer -->
-    <footer class="bg-gray-100 dark:bg-gray-800 py-8 mt-auto">
-        <div class="container mx-auto px-4">
-            <div class="flex flex-col md:flex-row justify-between items-center">
-                <p class="text-gray-600 dark:text-gray-400 mb-4 md:mb-0">
-                    &copy; 2024 Alexander Efremov. All rights reserved.
-                </p>
-                <div class="flex space-x-6">
-                    <a href="#about" class="text-gray-600 dark:text-gray-400 hover:text-primary-light dark:hover:text-primary-light transition">About</a>
-                    <a href="#materials" class="text-gray-600 dark:text-gray-400 hover:text-primary-light dark:hover:text-primary-light transition">Materials</a>
-                    <a href="#contact" class="text-gray-600 dark:text-gray-400 hover:text-primary-light dark:hover:text-primary-light transition">Contact</a>
-                </div>
-            </div>
+        <noscript>
+            <p style="margin-top: 20px; font-weight: bold;">JavaScript is disabled. Please use the links above to select your language.</p>
+        </noscript>
     </div>
-    </footer>
-    
-    <!-- Theme Switcher Script -->
-    <script>
-        document.getElementById('theme-toggle').addEventListener('click', function() {
-            if (document.documentElement.classList.contains('dark')) {
-                document.documentElement.classList.remove('dark');
-                localStorage.theme = 'light';
-            } else {
-                document.documentElement.classList.add('dark');
-                localStorage.theme = 'dark';
-            }
-        });
-    </script>
 </body>
 </html> 

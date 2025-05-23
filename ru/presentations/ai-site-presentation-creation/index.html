@@ -1,0 +1,659 @@
+<!doctype html>
+<html lang="ru">
+
+<head>
+    <meta charset="utf-8">
+    <title>Создание сайтов и презентаций при помощи ИИ</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <!-- Reveal.js CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.4.0/reveal.min.css">
+    <!-- Тёмная тема: night -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.4.0/theme/night.min.css" id="theme">
+    <!-- Стиль подсветки кода (Monokai) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/monokai.min.css">
+
+    <!-- Шрифт Open Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+
+    <style>
+        body,
+        .reveal {
+            font-family: 'Open Sans', sans-serif;
+            color: #FFF;
+        }
+
+        .reveal .slides section {
+            font-size: 0.85em;
+        }
+
+        /* Интерактивные элементы */
+        .interactive {
+            cursor: pointer;
+            color: #3BE8B0;
+        }
+
+        .hidden-content {
+            display: none;
+            margin-top: 10px;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 4px;
+        }
+
+        .diagram-box {
+            border: 2px solid #3BE8B0;
+            padding: 1em;
+            border-radius: 6px;
+            margin-top: 1em;
+            text-align: center;
+        }
+
+        /* Заголовок на первом слайде */
+        .animated-title {
+            font-size: 2em;
+            animation: slideInTitle 1s ease forwards;
+        }
+
+        @keyframes slideInTitle {
+            0% {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+
+            100% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Emoji-блоки */
+        .emoji-block {
+            font-size: 80px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        /* Стили для токенов */
+        .token {
+            display: inline-block;
+            padding: 3px 5px;
+            margin: 2px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 0.9em;
+            color: #fff;
+        }
+
+        /* Цвета для каждого из 11 токенов */
+        .tcolor0 {
+            background: #cc6666;
+        }
+
+        .tcolor1 {
+            background: #de935f;
+        }
+
+        .tcolor2 {
+            background: #f0c674;
+        }
+
+        .tcolor3 {
+            background: #b5bd68;
+        }
+
+        .tcolor4 {
+            background: #8abeb7;
+        }
+
+        .tcolor5 {
+            background: #81a2be;
+        }
+
+        .tcolor6 {
+            background: #b294bb;
+        }
+
+        .tcolor7 {
+            background: #c5c8c6;
+            color: #000;
+        }
+
+        /* Светлый фон, тёмный текст */
+        .tcolor8 {
+            background: #a3685a;
+        }
+
+        .tcolor9 {
+            background: #5f819d;
+        }
+
+        .tcolor10 {
+            background: #85678f;
+        }
+
+        /* Стили для цитаты Satya Nadella */
+        .quote {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-style: italic;
+            margin-top: 20px;
+        }
+
+        .quote img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+        }
+
+        .comparison {
+            background: rgba(59, 232, 176, 0.15);
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+
+        /* Стили для кода */
+        pre code {
+            font-size: 0.75em;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* === NEW STYLES TO FIX LAYOUT ISSUES === */
+        /* Push down content of vertical slides to prevent overlap with parent H2 and its content */
+        .reveal .slides > section > section {
+             margin-top: 150px; /* Increased from 150px. */
+        }
+
+        /* Adjust H2 of horizontal slides if needed */
+        .reveal .slides section > h2 {
+            font-size: 1.9em; /* Slightly larger for main titles of horizontal sections */
+            margin-bottom: 20px;
+        }
+
+        /* Adjust H3 of vertical slides */
+        .reveal .slides section section > h3 {
+            font-size: 1.5em; /* Titles for vertical slides */
+            margin-bottom: 15px;
+        }
+
+        /* General list styling for better readability and to prevent overflow */
+        .reveal .slides ul,
+        .reveal .slides ol {
+            font-size: 0.85em; /* Relative to section font-size (0.85em * 0.85em of root) */
+            line-height: 1.1; /* Reduced from 1.4 */
+        }
+        .reveal .slides ul ul,
+        .reveal .slides ol ol {
+            font-size: 1em; /* Keep nested lists same relative size as parent list items */
+            margin-top: 0.1em; /* Reduced from 0.3em */
+            margin-bottom: 0.1em; /* Reduced from 0.3em */
+        }
+         .reveal .slides li {
+            margin-bottom: 0.1em; /* Reduced from 0.4em - Add a bit of space between list items */
+        }
+
+        /* Styling for inline logos (if not using inline styles for height) */
+        .reveal .slides li img[alt*="Logo"],
+        .reveal .slides p img[alt*="Logo"] {
+            max-height: 28px; /* Consistent logo height in text flow */
+            height: auto;
+            vertical-align: text-bottom; /* Adjusted for better text alignment */
+            margin-right: 6px;
+            /* margin-bottom: -3px; Removed for re-evaluation */
+        }
+        /* === END OF NEW STYLES === */
+
+        /* === CSS for Narrow Image Carousel === */
+        .narrow-carousel-container {
+            width: 100%; /* Takes full width of its parent */
+            overflow-x: auto; /* Enables horizontal scrolling */
+            margin-top: 0px; 
+            margin-bottom: 0px;
+            padding-bottom: 0px; /* Space for scrollbar if it appears */
+            border-radius: 4px;
+            /* background: rgba(255,255,255,0.03); Optional: to see boundaries */
+        }
+        .narrow-carousel {
+            display: flex; /* Aligns images in a row */
+            flex-direction: row;
+            gap: 12px; /* Space between images */
+            padding: 5px 2px; /* Some padding inside the scrolling area */
+        }
+        .narrow-carousel img {
+            height: 120px; /* Defines the "narrow" aspect */
+            width: auto; /* Maintain aspect ratio */
+            border-radius: 5px;
+            border: 1px solid #444;
+            flex-shrink: 0; /* Prevents images from shrinking to fit */
+        }
+        /* === END OF NEW STYLES === */
+    </style>
+</head>
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <!-- Слайд 1: Заглавный слайд -->
+            <section data-transition="slide">
+                <h2 class="animated-title">Создание сайтов и презентаций при помощи ИИ</h2>
+                <h3>Александр Ефремов, эксперт по AI</h3>
+                <p>Компания «Аспирити»<br>
+                    Email: <a href="mailto:ae@aspirity.com" style="color:#3BE8B0;">ae@aspirity.com</a> | Telegram: <a
+                        href="https://t.me/sabbah13" target="_blank" style="color:#3BE8B0;">@sabbah13</a></p>
+                <div class="emoji-block">💻✨</div>
+            </section>
+
+            <!-- Блок 0: Разогрев -->
+            <section data-transition="slide">
+                <h2>Магия простого промпта?</h2>
+                <!-- Вертикальный слайд 1: Введение -->
+                <section data-transition="slide">
+                    <h3>Простой запрос к ИИ</h3>
+                    <p>Ожидания vs. Реальность при создании сайта с помощью одного простого запроса к ИИ.</p>
+                    <div class="emoji-block">✨➡️❓</div>
+                </section>
+                <!-- Вертикальный слайд 2: Ожидание -->
+                <section data-transition="slide">
+                    <h3>Ожидание: Великолепный результат!</h3>
+                    <img src="assets/bakery-good.png" alt="Ожидаемый крутой сайт" style="width: 450px; border: 1px solid #ccc; margin-top: 20px;">
+                    <p style="font-size: 0.8em; margin-top: 10px;">"Сделай мне красивый сайт для кофейни!"</p>
+                </section>
+                <!-- Вертикальный слайд 3: Реальность -->
+                <section data-transition="slide">
+                    <h3>Реальность (часто): Базовый скелет</h3>
+                    <img src="assets/bakery-bad.png" alt="Реальный базовый сайт" style="width: 450px; border: 1px solid #ccc; margin-top: 20px;">
+                    <p style="font-size: 0.8em; margin-top: 10px;">Очень простой HTML, без стилей и контента.</p>
+                </section>
+                <!-- Вертикальный слайд 4: В чем проблема? -->
+                <section data-transition="slide">
+                    <h3>В чем же дело?</h3>
+                    <p class="fragment" style="margin-top: 30px;">Почему так происходит и как это исправить? Давайте разберемся!</p>
+                    <div class="emoji-block fragment">🧐</div>
+                </section>
+            </section>
+
+            <!-- Блок 1: Почему результат "не очень"? -->
+            <section data-transition="slide">
+                <h2>Почему результат "не очень"?</h2>
+                <ul>
+                    <li><strong>Отсутствие качественных материалов:</strong> ИИ не всегда подбирает или генерирует подходящие изображения, видео, тексты.</li>
+                    <li><strong>Нет продуманных стилей и структуры:</strong> Базовый вывод ИИ часто лишен дизайна и удобной навигации.</li>
+                    <li><strong>Сайт не опубликован:</strong> Сгенерированный код нужно где-то разместить, чтобы он стал доступен в интернете.</li>
+                    <li><strong>Нет уникальности и брендинга:</strong> Общие решения не отражают индивидуальность проекта.</li>
+                </ul>
+                <div class="emoji-block">🤔</div>
+            </section>
+
+            <!-- Блок 2: Ассеты: где брать и как генерировать -->
+            <section data-transition="slide">
+                <h2>Материалы: Где брать и как создавать?</h2>
+                <!-- Вертикальный слайд 1: Библиотеки -->
+                <section data-transition="slide">
+                    <h3>Готовые материалы: Фото- и видеостоки</h3>
+                    <p style="margin-top: 10px; margin-bottom: 20px;">Качественный контент – основа любого сайта или презентации.</p>
+                    <div style="display: flex; justify-content: space-around; align-items: flex-start; text-align: center;">
+                        <div style="flex:1;">
+                            <a href="https://pexels.com" target="_blank"><img src="https://img.logo.dev/pexels.com?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Pexels Logo" style="height: 50px;"></a>
+                            <p style="font-size:0.9em;"><a href="https://pexels.com" target="_blank" style="color:#3BE8B0;">Pexels</a> – бесплатные стоковые фото и видео.</p>
+                        </div>
+                        <div style="flex:1;">
+                            <a href="https://unsplash.com" target="_blank"><img src="https://img.logo.dev/unsplash.com?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Unsplash Logo" style="height: 50px;"></a>
+                            <p style="font-size:0.9em;"><a href="https://unsplash.com" target="_blank" style="color:#3BE8B0;">Unsplash</a> – коллекция бесплатных фото высокого разрешения.</p>
+                        </div>
+                    </div>
+
+                    <div class="narrow-carousel-container">
+                        <div class="narrow-carousel">
+                            <img src="https://picsum.photos/280/160?random=1" alt="Пример с Pexels 1">
+                            <img src="https://picsum.photos/240/160?random=2" alt="Пример с Pexels 2">
+                            <img src="https://picsum.photos/300/160?random=3" alt="Пример с Pexels 3">
+                            <img src="https://picsum.photos/260/160?random=4" alt="Пример с Pexels 4">
+                            <img src="https://picsum.photos/270/160?random=5" alt="Пример с Pexels 5">
+                            <img src="https://picsum.photos/280/160?random=6" alt="Пример с Pexels 1">
+                            <img src="https://picsum.photos/240/160?random=7" alt="Пример с Pexels 2">
+                            <img src="https://picsum.photos/300/160?random=8" alt="Пример с Pexels 3">
+                            <img src="https://picsum.photos/260/160?random=9" alt="Пример с Pexels 4">
+                            <img src="https://picsum.photos/270/160?random=10" alt="Пример с Pexels 5">
+
+                        </div>
+                    </div>
+                    
+                </section>
+                <!-- Вертикальный слайд 2: Генерация изображений -->
+                <section data-transition="slide">
+                    <h3>Генерация изображений с ИИ</h3>
+                    <p>Создавайте уникальные картинки по текстовому описанию.</p>
+                    <ul>
+                        <li><img src="https://img.logo.dev/openai.com?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="ChatGPT Logo" style="height: 30px; vertical-align: middle;"> <a href="https://openai.com/chatgpt/" target="_blank" style="color:#3BE8B0;">ChatGPT 4o</a></li>
+                        <li><img src="https://img.logo.dev/midjourney.com?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Midjourney Logo" style="height: 30px; vertical-align: middle;"> <a href="https://www.midjourney.com/" target="_blank" style="color:#3BE8B0;">Midjourney</a></li>
+                        <li><img src="https://img.logo.dev/stability.ai?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Stable Diffusion Logo" style="height: 30px; vertical-align: middle;"> <a href="https://stablediffusion.com/" target="_blank" style="color:#3BE8B0;">Stable Diffusion</a></li>
+                        <li><img src="https://img.logo.dev/google.com?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Google Imagen Logo" style="height: 30px; vertical-align: middle;"> Google Imagen 4</li>
+                    </ul>
+                    <img src="assets/sticker.webp" alt="Пример сгенерированного ИИ изображения" style="width: 200px; margin-top:10px;">
+                </section>
+                <!-- Вертикальный слайд 3: Генерация видео -->
+                <section data-transition="slide">
+                    <h3>Создание видео с ИИ</h3>
+                    <p>От коротких роликов до анимации текста.</p>
+                    <ul>
+                        <li><img src="https://img.logo.dev/runwayml.com?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="RunwayML Logo" style="height: 30px; vertical-align: middle;"> <a href="https://runwayml.com/" target="_blank" style="color:#3BE8B0;">Runway (Gen-2, Gen-3)</a></li>
+                        <li><img src="https://img.logo.dev/heygen.com?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="HeyGen Logo" style="height: 30px; vertical-align: middle;"> <a href="https://www.heygen.com/" target="_blank" style="color:#3BE8B0;">HeyGen</a> (для видео с аватарами)</li>
+                        <li><img src="https://img.logo.dev/google.com?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Google Veo Logo" style="height: 30px; vertical-align: middle;"> <a href="https://blog.google/technology/ai/google-veo-video-generation/" target="_blank" style="color:#3BE8B0;">Google Veo 3</a></li>
+                         <li><img src="https://img.logo.dev/openai.com?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="OpenAI Sora Logo" style="height: 30px; vertical-align: middle;"> OpenAI Sora</li>
+                    </ul>
+                </section>
+                <!-- Вертикальный слайд 4: Генерация аудио -->
+                <section data-transition="slide">
+                    <h3>Генерация аудио и голоса</h3>
+                    <p>Озвучка, музыка и звуковые эффекты.</p>
+                    <ul>
+                        <li><img src="https://img.logo.dev/elevenlabs.io?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="ElevenLabs Logo" style="height: 30px; vertical-align: middle;"> <a href="https://elevenlabs.io/" target="_blank" style="color:#3BE8B0;">ElevenLabs</a> (реалистичный синтез речи)</li>
+                        <li><img src="https://img.logo.dev/suno.ai?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Suno AI Logo" style="height: 30px; vertical-align: middle;"> <a href="https://suno.ai/" target="_blank" style="color:#3BE8B0;">Suno AI</a> (генерация музыки)</li>
+                        <li><img src="https://img.logo.dev/udio.com?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Udio Logo" style="height: 30px; vertical-align: middle;"> <a href="https://www.udio.com/" target="_blank" style="color:#3BE8B0;">Udio</a> (генерация музыки)</li>
+                        <li><img src="https://img.logo.dev/riffusion.com?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Riffusion Logo" style="height: 30px; vertical-align: middle;"> <a href="https://www.riffusion.com/" target="_blank" style="color:#3BE8B0;">Riffusion</a> (генерация музыки)</li>                         
+                    </ul>
+                </section>
+            </section>
+
+            <!-- Блок 3: Scaffolding, фреймворки и статические генераторы -->
+            <section data-transition="slide">
+                <h2>Каркас и стиль: Фреймворки и Генераторы</h2>
+                <p>Инструменты для создания современной структуры и внешнего вида.</p>
+                <!-- Вертикальный слайд 1: UI-фреймворки -->
+                <section data-transition="slide">
+                    <h3>UI-фреймворки: Готовый дизайн</h3>
+                    <p>Наборы готовых компонентов и стилей.</p>
+                    <ul>
+                        <li><img src="https://img.logo.dev/getbootstrap.com?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Bootstrap Logo" style="height: 30px; vertical-align: middle;"> <a href="https://getbootstrap.com/" target="_blank" style="color:#3BE8B0;">Bootstrap</a> (172k★)</li>
+                        <li><img src="https://img.logo.dev/tailwindcss.com?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Tailwind CSS Logo" style="height: 30px; vertical-align: middle;"> <a href="https://tailwindcss.com/" target="_blank" style="color:#3BE8B0;">Tailwind CSS</a> (87k★)</li>
+                        <li><img src="https://img.logo.dev/ui.shadcn.com?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="shadcn/ui Logo" style="height: 30px; vertical-align: middle;"> <a href="https://ui.shadcn.com/" target="_blank" style="color:#3BE8B0;">shadcn/ui</a> (85k★)</li>
+                        <li><img src="https://img.logo.dev/bulma.io?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Bulma Logo" style="height: 30px; vertical-align: middle;"> <a href="https://bulma.io/" target="_blank" style="color:#3BE8B0;">Bulma</a> (50k★)</li>
+                    </ul>
+                </section>
+                <!-- Вертикальный слайд 2: Meta-фреймворки -->
+                <section data-transition="slide">
+                    <h3>Meta-фреймворки: Быстрый старт</h3>
+                    <p>Комплексные решения для современных веб-приложений.</p>
+                    <ul>
+                        <li><img src="https://img.logo.dev/nextjs.org?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Next.js Logo" style="height: 30px; vertical-align: middle;"> <a href="https://nextjs.org/" target="_blank" style="color:#3BE8B0;">Next.js</a> (стартеры)</li>
+                        <li><img src="https://img.logo.dev/astro.build?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Astro Logo" style="height: 30px; vertical-align: middle;"> <a href="https://astro.build/" target="_blank" style="color:#3BE8B0;">Astro</a> (темы)</li>
+                        <li><img src="https://img.logo.dev/gatsbyjs.com?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Gatsby Logo" style="height: 30px; vertical-align: middle;"> <a href="https://www.gatsbyjs.com/" target="_blank" style="color:#3BE8B0;">Gatsby</a> (56k★)</li>
+                    </ul>
+                </section>
+                <!-- Вертикальный слайд 3: Статические генераторы -->
+                <section data-transition="slide">
+                    <h3>Статические генераторы: Скорость и простота</h3>
+                    <p>Создание быстрых сайтов из шаблонов и данных.</p>
+                    <ul>
+                        <li><img src="https://img.logo.dev/gohugo.io?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Hugo Logo" style="height: 30px; vertical-align: middle;"> <a href="https://gohugo.io/" target="_blank" style="color:#3BE8B0;">Hugo</a></li>
+                        <li><img src="https://img.logo.dev/jekyllrb.com?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Jekyll Logo" style="height: 30px; vertical-align: middle;"> <a href="https://jekyllrb.com/" target="_blank" style="color:#3BE8B0;">Jekyll</a></li>
+                        <li><img src="https://img.logo.dev/astro.build?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Astro Logo" style="height: 30px; vertical-align: middle;"> <a href="https://astro.build/" target="_blank" style="color:#3BE8B0;">Astro</a> (также и как SSG)</li>
+                    </ul>
+                </section>
+                 <!-- Вертикальный слайд 4: CMS -->
+                <section data-transition="slide">
+                    <h3>CMS: Удобное управление контентом</h3>
+                    <p>ИИ генерирует сайт, а вы легко редактируете его через CMS.</p>
+                    <ul>
+                        <li><strong>Headless CMS:</strong> <a href="https://www.strapi.io" target="_blank" style="color:#3BE8B0;">Strapi</a>, <a href="https://www.sanity.io" target="_blank" style="color:#3BE8B0;">Sanity.io</a> - ИИ помогает с контентом, CMS предоставляет API.</li>
+                        <li><strong>Традиционные CMS с ИИ-плагинами:</strong> WordPress + AI Plugins.</li>
+                        <li>Многие ИИ-конструкторы сайтов (напр. <a href="https://durable.co" target="_blank" style="color:#3BE8B0;">Durable.co</a>) предлагают встроенные редакторы.</li>
+                    </ul>
+                     <p style="font-size: 0.8em; margin-top: 15px;">ИИ может генерировать структуру и начальный контент, который потом легко импортировать и управлять через CMS.</p>
+                </section>
+            </section>
+
+            <!-- Блок 4: Публикация без боли -->
+            <section data-transition="slide">
+                <h2>Показываем миру: Публикация</h2>
+                <p>Разместить сайт в интернете – это просто!</p>
+                <!-- Вертикальный слайд 1: Платформы -->
+                <section data-transition="slide">
+                    <h3>Платформы для деплоя</h3>
+                    <p>Сервисы, которые автоматизируют процесс публикации.</p>
+                    <ul>
+                        <li><img src="https://img.logo.dev/vercel.com?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Vercel Logo" style="height: 30px; vertical-align: middle;"> <a href="https://vercel.com/" target="_blank" style="color:#3BE8B0;">Vercel</a></li>
+                        <li><img src="https://img.logo.dev/netlify.com?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Netlify Logo" style="height: 30px; vertical-align: middle;"> <a href="https://www.netlify.com/" target="_blank" style="color:#3BE8B0;">Netlify</a></li>
+                        <li><img src="https://img.logo.dev/github.com?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="GitHub Pages Logo" style="height: 30px; vertical-align: middle;"> <a href="https://pages.github.com/" target="_blank" style="color:#3BE8B0;">GitHub Pages</a></li>
+                        <li><img src="https://img.logo.dev/cloudflare.com?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Cloudflare Pages Logo" style="height: 30px; vertical-align: middle;"> <a href="https://pages.cloudflare.com/" target="_blank" style="color:#3BE8B0;">Cloudflare Pages</a></li>
+                    </ul>
+                    <p style="font-size: 0.8em;">Многие предлагают бесплатные тарифы и автоматические временные домены.</p>
+                </section>
+                <!-- Вертикальный слайд 2: Домены -->
+                <section data-transition="slide">
+                    <h3>Свой адрес: Домены</h3>
+                    <p>Как купить и привязать уникальное имя для вашего сайта.</p>
+                    <p><strong>Популярные регистраторы доменов:</strong></p>
+                    <ul>
+                        <li><img src="https://img.logo.dev/namecheap.com?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Namecheap Logo" style="height: 25px; vertical-align: middle;"> Namecheap</li>
+                        <li><img src="https://img.logo.dev/godaddy.com?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="GoDaddy Logo" style="height: 25px; vertical-align: middle;"> GoDaddy</li>
+                        <li><img src="https://img.logo.dev/reg.ru?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="REG.RU Logo" style="height: 25px; vertical-align: middle;"> REG.RU (для .RU/.РФ)</li>
+                    </ul>
+                    <p style="font-size: 0.8em;">Процесс привязки обычно включает изменение DNS-записей на сайте регистратора, чтобы они указывали на вашу хостинг-платформу (Vercel, Netlify и т.д.).</p>
+                </section>
+            </section>
+
+            <!-- Блок 5: Инструменты «ИИ-разработчика» -->
+            <section data-transition="slide">
+                <h2>Инструменты ИИ-разработчика</h2>
+                <p>От простых чат-ботов до специализированных IDE.</p>
+                <!-- Вертикальный слайд 1: Простые ИИ-ассистенты -->
+                <section data-transition="slide">
+                    <h3>Помощники в браузере</h3>
+                    <p>Быстрая генерация кода, объяснения, рефакторинг.</p>
+                    <ul>
+                        <li><img src="https://img.logo.dev/openai.com?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="ChatGPT Logo" style="height: 30px; vertical-align: middle;"> <a href="https://chat.openai.com/" target="_blank" style="color:#3BE8B0;">ChatGPT</a></li>
+                        <li><img src="https://img.logo.dev/anthropic.com?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Claude AI Logo" style="height: 30px; vertical-align: middle;"> <a href="https://claude.ai/" target="_blank" style="color:#3BE8B0;">Claude AI</a></li>
+                        <li><img src="https://img.logo.dev/gemini.google.com?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Google Gemini Logo" style="height: 30px; vertical-align: middle;"> <a href="https://gemini.google.com/" target="_blank" style="color:#3BE8B0;">Google Gemini</a></li>
+                        <li><img src="https://img.logo.dev/deepseek.com?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="DeepSeek Logo" style="height: 30px; vertical-align: middle;"> <a href="https://www.deepseek.com/" target="_blank" style="color:#3BE8B0;">DeepSeek</a></li>
+                    </ul>
+                </section>
+                <!-- Вертикальный слайд 2: ИИ-агенты для разработки -->
+                <section data-transition="slide">
+                    <h3>ИИ-агенты: Автономная разработка</h3>
+                    <p>Инструменты, которые могут создавать целые приложения по описанию.</p>
+                    <ul>
+                        <li><img src="https://img.logo.dev/replit.com?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Replit Logo" style="height: 30px; vertical-align: middle;"> <a href="https://replit.com/ghostwriter" target="_blank" style="color:#3BE8B0;">Replit (AI / Ghostwriter)</a></li>
+                        <li><img src="https://img.logo.dev/v0.dev?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="v0.dev Logo" style="height: 30px; vertical-align: middle;"> <a href="https://v0.dev/" target="_blank" style="color:#3BE8B0;">v0.dev (by Vercel)</a> - генерация UI</li>
+                        <li><img src="https://img.logo.dev/lovable.dev?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Lovable.dev Logo" style="height: 30px; vertical-align: middle;"> <a href="https://lovable.dev/" target="_blank" style="color:#3BE8B0;">Lovable.dev</a></li>
+                        <li><img src="https://img.logo.dev/bolt.new?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Bolt.new Logo" style="height: 30px; vertical-align: middle;"> <a href="https://bolt.new/" target="_blank" style="color:#3BE8B0;">Bolt.new</a></li>
+                    </ul>
+                </section>
+                <!-- Вертикальный слайд 3: Продвинутые ИИ-инструменты -->
+                <section data-transition="slide">
+                    <h3>Инструменты для профи: AI-IDE и плагины</h3>
+                    <p>Глубокая интеграция ИИ в процесс разработки.</p>
+                    <ul>
+                        <li><img src="https://img.logo.dev/cursor.sh?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Cursor Logo" style="height: 30px; vertical-align: middle;"> <a href="https://cursor.sh/" target="_blank" style="color:#3BE8B0;">Cursor</a></li>
+                        <li><img src="https://img.logo.dev/github.com?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="GitHub Copilot Logo" style="height: 30px; vertical-align: middle;"> <a href="https://copilot.github.com/" target="_blank" style="color:#3BE8B0;">GitHub Copilot</a></li>
+                        <li><img src="https://img.logo.dev/codeium.com?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Codeium Logo" style="height: 30px; vertical-align: middle;"> <a href="https://codeium.com/" target="_blank" style="color:#3BE8B0;">Windsurf</a></li>
+                        <li><img src="https://img.logo.dev/aws.amazon.com?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="AWS CodeWhisperer Logo" style="height: 30px; vertical-align: middle;"> <a href="https://aws.amazon.com/codewhisperer/" target="_blank" style="color:#3BE8B0;">AWS CodeWhisperer</a></li>
+                        <li><img src="https://img.logo.dev/openai.com?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="OpenAI Codex Logo" style="height: 30px; vertical-align: middle;"> <a href="https://openai.com/blog/openai-codex/" target="_blank" style="color:#3BE8B0;">OpenAI Codex</a></li>
+                        <li><img src="https://img.logo.dev/anthropic.com?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Claude AI Logo" style="height: 30px; vertical-align: middle;"> <a href="https://www.anthropic.com/claude-code" target="_blank" style="color:#3BE8B0;">Claude Code</a></li>
+                    </ul>
+                </section>
+            </section>
+
+            <!-- Блок 6: Презентации как сайты -->
+            <section data-transition="slide">
+                <h2>Презентации = Сайты: Reveal.js</h2>
+                <p>Эта презентация сделана с помощью Reveal.js!</p>
+                <!-- Вертикальный слайд 1: Что такое Reveal.js? -->
+                <section data-transition="slide">
+                    <h3>Reveal.js: Интерактивные HTML-презентации</h3>
+                    <img src="https://img.logo.dev/revealjs.com?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Reveal.js Logo" style="height: 80px;">
+                    <p><a href="https://revealjs.com/" target="_blank" style="color:#3BE8B0;">Reveal.js</a> (69k★ на GitHub) – это фреймворк для создания красивых интерактивных презентаций прямо в браузере с использованием HTML, CSS и JavaScript.</p>
+                </section>
+                <!-- Вертикальный слайд 2: Преимущества -->
+                <section data-transition="slide">
+                    <h3>Почему Reveal.js?</h3>
+                    <ul>
+                        <li><strong>Интерактивность:</strong> Вставка веб-контента, анимации, интерактивные диаграммы.</li>
+                        <li><strong>Гибкость:</strong> Горизонтальные и вертикальные слайды, темы, плагины.</li>
+                        <li><strong>Экспорт в PDF:</strong> Легко поделиться или распечатать.</li>
+                        <li><strong>Веб-сайт:</strong> Публикуется как обычный сайт, доступный по ссылке.</li>
+                        <li><strong>Управление кодом:</strong> Полный контроль над структурой и стилем.</li>
+                        <li><strong>Markdown поддержка:</strong> Можно писать контент в Markdown.</li>
+                    </ul>
+                </section>
+                <!-- Вертикальный слайд 3: Редактор Slides.com -->
+                <section data-transition="slide">
+                    <h3>Онлайн-редактор: Slides.com</h3>
+                    <a href="https://slides.com" target="_blank"><img src="https://img.logo.dev/slides.com?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Slides.com Logo" style="height: 70px;"></a>
+                    <p><a href="https://slides.com" target="_blank" style="color:#3BE8B0;">Slides.com</a> – это коммерческий онлайн-редактор, построенный на базе Reveal.js. Позволяет создавать и редактировать презентации в удобном визуальном интерфейсе, без необходимости прямого редактирования HTML.</p>
+                </section>
+            </section>
+
+            <!-- Блок 7: Продвинутый дизайн -->
+            <section data-transition="slide">
+                <h2>Продвинутый дизайн с ИИ</h2>
+                <p>Интеграция ИИ в профессиональные инструменты дизайна.</p>
+                <!-- Вертикальный слайд 1: Figma + AI -->
+                <section data-transition="slide">
+                    <h3>Figma + AI = Магия дизайна</h3>
+                    <img src="https://img.logo.dev/figma.com?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Figma Logo" style="height: 70px;">
+                    <p>Популярный инструмент для UI/UX дизайна <a href="https://www.figma.com/" target="_blank" style="color:#3BE8B0;">Figma</a> активно интегрируется с ИИ:</p>
+                    <ul>
+                        <li><strong>AI-плагины:</strong>
+                            <ul>
+                                <li><a href="https://galileo.ai/" target="_blank" style="color:#3BE8B0;">Galileo AI</a>: генерация UI по текстовому описанию.</li>
+                                <li>FigGPT (и аналоги): интеграция ChatGPT для генерации текстов, идей.</li>
+                                <li>Плагины для автоматизации рутинных задач.</li>
+                            </ul>
+                        </li>
+                        <li><strong>AI-ассистенты (например, Cursor):</strong> Могут помочь в работе с Figma через API или плагины для генерации/изменения дизайна на основе инструкций.</li>
+                    </ul>
+                </section>
+                <!-- Вертикальный слайд 2: Google Stitch -->
+                <section data-transition="slide">
+                    <h3>Google Stitch: UI из промпта</h3>
+                     <img src="https://img.logo.dev/google.com?token=pk_UsdugYJqRk-DlDMPq_of4A" alt="Google Labs Logo" style="height: 60px;">
+                    <p><strong>Google Stitch</strong> (анонсирован на Google I/O, может быть частью Google Labs или Project IDX) – экспериментальный инструмент для генерации UI-макетов и готового HTML/CSS кода из текстового или графического промпта.</p>
+                    <ul>
+                        <li>Обещает быструю генерацию прототипов.</li>
+                        <li>Возможность экспорта в Figma для дальнейшей доработки.</li>
+                        <li>Показывает будущее дизайна, управляемого ИИ.</li>
+                    </ul>
+                </section>
+            </section>
+
+            <!-- Блок 8: Чек-лист действий -->
+            <section data-transition="slide">
+                <h2>Ваш план действий: Чек-лист</h2>
+                <ol>
+                    <li class="fragment"><strong>Выбрать фреймворк:</strong> Определитесь с технологической основой вашего сайта (Bootstrap, Next.js, Astro и т.д.).</li>
+                    <li class="fragment"><strong>Собрать/сгенерировать материалы:</strong> Подготовьте тексты, изображения, видео (стоки, ИИ-генерация).</li>
+                    <li class="fragment"><strong>Создать и доработать:</strong> Используйте ИИ-инструменты (ChatGPT, Cursor, v0.dev) для генерации и кастомизации кода и дизайна.</li>
+                    <li class="fragment"><strong>Опубликовать сайт:</strong> Задеплойте ваш проект на Vercel, Netlify или другой платформе.</li>
+                    <li class="fragment"><strong>(Опционально) Привязать домен:</strong> Сделайте сайт доступным по уникальному адресу.</li>
+                    <li class="fragment"><strong>Собрать обратную связь и улучшать:</strong> Анализируйте и развивайте ваш проект.</li>
+                </ol>
+                <div class="emoji-block fragment">🚀</div>
+            </section>
+
+            <!-- Слайд: Полезные ссылки и ресурсы -->
+            <section data-transition="slide">
+                <h2>Полезные ссылки и ресурсы</h2>
+                 <div style="display: flex; font-size: 0.75em;">
+                    <div style="flex: 1;">
+                        <strong>Материалы (Ассеты):</strong>
+                        <ul>
+                            <li><a href="https://pexels.com" target="_blank" style="color:#3BE8B0;">Pexels</a>, <a href="https://unsplash.com" target="_blank" style="color:#3BE8B0;">Unsplash</a></li>
+                            <li>Генерация изображений: <a href="https://openai.com/chatgpt/" target="_blank" style="color:#3BE8B0;">ChatGPT (DALL-E)</a>, <a href="https://www.midjourney.com/" target="_blank" style="color:#3BE8B0;">Midjourney</a></li>
+                            <li>Генерация видео: <a href="https://runwayml.com/" target="_blank" style="color:#3BE8B0;">Runway</a>, <a href="https://www.heygen.com/" target="_blank" style="color:#3BE8B0;">HeyGen</a></li>
+                            <li>Генерация аудио: <a href="https://elevenlabs.io/" target="_blank" style="color:#3BE8B0;">ElevenLabs</a>, <a href="https://suno.ai/" target="_blank" style="color:#3BE8B0;">Suno AI</a></li>
+                        </ul>
+                        <strong>Фреймворки и Генераторы:</strong>
+                        <ul>
+                            <li>UI: <a href="https://getbootstrap.com/" target="_blank" style="color:#3BE8B0;">Bootstrap</a>, <a href="https://tailwindcss.com/" target="_blank" style="color:#3BE8B0;">Tailwind CSS</a>, <a href="https://ui.shadcn.com/" target="_blank" style="color:#3BE8B0;">shadcn/ui</a></li>
+                            <li>Meta: <a href="https://nextjs.org/" target="_blank" style="color:#3BE8B0;">Next.js</a>, <a href="https://astro.build/" target="_blank" style="color:#3BE8B0;">Astro</a>, <a href="https://www.gatsbyjs.com/" target="_blank" style="color:#3BE8B0;">Gatsby</a></li>
+                            <li>SSG: <a href="https://gohugo.io/" target="_blank" style="color:#3BE8B0;">Hugo</a>, <a href="https://jekyllrb.com/" target="_blank" style="color:#3BE8B0;">Jekyll</a></li>
+                        </ul>
+                    </div>
+                    <div style="flex: 1;">
+                        <strong>Публикация (Деплой):</strong>
+                        <ul>
+                            <li><a href="https://vercel.com/" target="_blank" style="color:#3BE8B0;">Vercel</a>, <a href="https://www.netlify.com/" target="_blank" style="color:#3BE8B0;">Netlify</a>, <a href="https://pages.github.com/" target="_blank" style="color:#3BE8B0;">GitHub Pages</a></li>
+                        </ul>
+                        <strong>Инструменты ИИ-разработчика:</strong>
+                        <ul>
+                            <li>Браузерные: <a href="https://chat.openai.com/" target="_blank" style="color:#3BE8B0;">ChatGPT</a>, <a href="https://claude.ai/" target="_blank" style="color:#3BE8B0;">Claude AI</a>, <a href="https://gemini.google.com/" target="_blank" style="color:#3BE8B0;">Gemini</a></li>
+                            <li>Агенты: <a href="https://replit.com/ghostwriter" target="_blank" style="color:#3BE8B0;">Replit AI</a>, <a href="https://v0.dev/" target="_blank" style="color:#3BE8B0;">v0.dev</a>, <a href="https://lovable.dev/" target="_blank" style="color:#3BE8B0;">Lovable.dev</a></li>
+                            <li>AI-IDE: <a href="https://cursor.sh/" target="_blank" style="color:#3BE8B0;">Cursor</a>, <a href="https://copilot.github.com/" target="_blank" style="color:#3BE8B0;">GitHub Copilot</a>, <a href="https://codeium.com/" target="_blank" style="color:#3BE8B0;">Codeium</a></li>
+                        </ul>
+                        <strong>Презентации и Дизайн:</strong>
+                        <ul>
+                            <li><a href="https://revealjs.com/" target="_blank" style="color:#3BE8B0;">Reveal.js</a>, <a href="https://slides.com/" target="_blank" style="color:#3BE8B0;">Slides.com</a></li>
+                            <li><a href="https://www.figma.com/" target="_blank" style="color:#3BE8B0;">Figma</a> + AI Plugins (<a href="https://galileo.ai/" target="_blank" style="color:#3BE8B0;">Galileo AI</a>)</li>
+                        </ul>
+                    </div>
+                </div>
+                <p style="font-size: 0.6em; text-align: center; margin-top: 30px;">Логотипы предоставлены <a href="https://logo.dev" target="_blank" style="color:#3BE8B0;">Logo.dev</a></p>
+            </section>
+
+            <!-- Слайд: Благодарности и контакты -->
+            <section data-transition="slide">
+                <h2>Спасибо за внимание!</h2>
+                <p>
+                    Александр Ефремов<br>
+                    Эксперт по AI, <a href="https://aspirity.com/" target="_blank" style="color:#3BE8B0;">Компания
+                        «Аспирити»</a>
+                </p>
+                <p>
+                    ✉️ <a href="mailto:ae@aspirity.com" style="color:#3BE8B0;">ae@aspirity.com</a> | Telegram:
+                    <a href="https://t.me/sabbah13" target="_blank" style="color:#3BE8B0;">@sabbah13</a>
+                </p>
+                <div style="text-align: center; margin: 30px 0;">
+                    <img src="https://media.licdn.com/dms/image/v2/D4D03AQHk6KmWOKJd1w/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1698778011147?e=1747267200&v=beta&t=XGyRlARt2AOWYpDegXJXcLvedZn4P_WdrjVvmnG74hk"
+                        alt="Александр Ефремов" style="max-width: 250px; border-radius: 50%;">
+                </div>
+                <div style="text-align: center; margin-top: 20px;">
+                    <a href="?print-pdf"
+                        style="display: inline-block; padding: 10px 20px; font-size: 1em; background: #3BE8B0; border-radius: 4px; color: #000; text-decoration: none; cursor: pointer;">
+                        Скачать PDF
+                    </a>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- Reveal.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.4.0/reveal.min.js"></script>
+    <!-- Плагин highlight.js для подсветки кода -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.4.0/plugin/highlight/highlight.min.js"></script>
+    <!-- Плагин markdown для data-markdown -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.4.0/plugin/markdown/markdown.min.js"></script>
+
+    <script>
+        Reveal.initialize({
+            hash: true,
+            slideNumber: true,
+            transition: 'slide',
+            backgroundTransition: 'slide',
+            width: 1200,
+            height: 700,
+            margin: 0.08,
+            minScale: 0.2,
+            maxScale: 1.3,
+            plugins: [RevealHighlight, RevealMarkdown]
+        });
+    </script>
+</body>
+
+</html>
