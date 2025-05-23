@@ -4,7 +4,7 @@ Personal website of Alexander Efremov, sharing educational materials about artif
 
 ## 🌐 Website
 
-Visit the website at: [https://A1exE0v.github.io/ai-edu/](https://A1exE0v.github.io/ai-edu/)
+Visit the website at: [https://sabbah13.github.io/ai-edu/](https://sabbah13.github.io/ai-edu/)
 
 ## 📚 Contents
 
@@ -22,8 +22,6 @@ Visit the website at: [https://A1exE0v.github.io/ai-edu/](https://A1exE0v.github
 ## 👤 Author
 
 **Alexander Efremov**
-- Email: [ae@aspirity.com](mailto:ae@aspirity.com)
-- Telegram: [@sabbah13](https://t.me/sabbah13)
 - Company: [Aspirity](https://aspirity.com/)
 
 ## 📄 License
