@@ -4,7 +4,7 @@ Personal website of Alexander Efremov, sharing educational materials about artif
 
 ## 🌐 Website
 
-Visit the website at: [https://A1exE0v.github.io/ai-edu/](https://A1exE0v.github.io/ai-edu/)
+Visit the website at: [https://sabbah13.github.io/ai-edu/](https://sabbah13.github.io/ai-edu/)
 
 ## 📚 Contents
 
